@@ -11,6 +11,7 @@
   <meta property="og:description" content="Profesyonel fizyoterapi hizmetleri - Rehabilitasyon, Reformer Pilates, Manuel Terapi" />
   <meta property="og:type" content="website" />
   <link rel="canonical" href="https://www.beyzaargin.com/" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -1463,6 +1464,76 @@
       .services-grid { grid-template-columns: 1fr; }
       .flip-card { height: 420px; }
     }
+    @media (max-width:768px){
+  .float-buttons{
+    display:none;
+  }
+}
+    /* =============================
+   MOBİL ALT PREMİUM ŞERİT
+============================= */
+.mobile-bottom-bar {
+  position: fixed;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 30px);
+  max-width: 420px;
+  height: 70px;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+
+  z-index: 9999;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+/* butonlar */
+.mb-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #1A1A2E;
+
+  text-decoration: none;
+  transition: all .3s ease;
+}
+
+/* yazı */
+.mb-item small {
+  font-size: 0.65rem;
+  opacity: 0.7;
+}
+
+/* hover efekti */
+.mb-item:hover {
+  transform: translateY(-3px) scale(1.05);
+}
+
+/* özel renkler */
+.mb-item.wa span { color: #25D366; }
+.mb-item.ig span { color: #E1306C; }
+.mb-item.call span { color: #2A7C8A; }
+
+/* sadece mobilde göster */
+@media (min-width: 768px) {
+  .mobile-bottom-bar {
+    display: none;
+  }
+}
   </style>
 </head>
 <body>
@@ -1862,5 +1933,23 @@
       });
     });
   </script>
+  <!-- MOBİL ALT ŞERİT -->
+<div class="mobile-bottom-bar">
+  
+  <a href="https://wa.me/905435790888" class="mb-item wa">
+  <span><i class="fab fa-whatsapp"></i></span>
+  <small>WhatsApp</small>
+</a>
+
+<a href="https://instagram.com/beyzaargin" class="mb-item ig">
+  <span><i class="fab fa-instagram"></i></span>
+  <small>Instagram</small>
+</a>
+
+<a href="tel:05435790888" class="mb-item call">
+  <span><i class="fas fa-phone"></i></span>
+  <small>Hemen Ara</small>
+</a>
+</div>
 </body>
 </html>

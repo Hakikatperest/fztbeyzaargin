@@ -633,7 +633,7 @@
     }
 
     /* =============================================
-       SERVICES
+       SERVICES - FLIP CARDS
     ============================================= */
     .services-grid {
       display: grid;
@@ -641,41 +641,66 @@
       gap: 24px;
     }
 
-    .service-card {
-      background: var(--white);
+    .flip-card {
+      background-color: transparent;
+      height: 380px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      border-radius: var(--radius);
+    }
+
+    .flip-card.flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-front, .flip-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
       border-radius: var(--radius);
       overflow: hidden;
-      box-shadow: var(--shadow-soft);
+    }
+
+    .flip-front {
+      background: var(--white);
       border: 1px solid var(--border);
-      transition: var(--transition);
-      cursor: default;
+      box-shadow: var(--shadow-soft);
     }
 
-    .service-card:hover {
-      transform: translateY(-8px);
-      box-shadow: var(--shadow-mid);
-      border-color: rgba(42,124,138,.25);
-    }
-
-    .service-img {
+    .flip-front .service-img {
       width: 100%;
       height: 200px;
       overflow: hidden;
       position: relative;
     }
 
-    .service-img img {
-      width: 100%; height: 100%;
+    .flip-front .service-img img {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
       transition: transform .6s ease;
     }
 
-    .service-card:hover .service-img img { transform: scale(1.06); }
+    .flip-card:hover .flip-front .service-img img {
+      transform: scale(1.06);
+    }
 
     .service-icon-float {
       position: absolute;
-      bottom: -16px; left: 24px;
-      width: 44px; height: 44px;
+      bottom: -16px;
+      left: 24px;
+      width: 44px;
+      height: 44px;
       background: var(--teal);
       border-radius: 12px;
       display: flex;
@@ -704,19 +729,70 @@
       line-height: 1.7;
     }
 
-    .service-link {
-      display: inline-flex;
+    .flip-back {
+      background: var(--teal);
+      color: var(--white);
+      transform: rotateY(180deg);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      gap: 6px;
-      margin-top: 14px;
-      font-size: .75rem;
-      font-weight: 600;
-      color: var(--teal);
-      letter-spacing: .5px;
-      transition: gap .3s;
+      padding: 32px 24px;
+      text-align: center;
     }
 
-    .service-link:hover { gap: 10px; }
+    .flip-back h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+      color: var(--white);
+    }
+
+    .flip-back p {
+      font-size: .85rem;
+      line-height: 1.7;
+      margin-bottom: 24px;
+      opacity: 0.9;
+    }
+
+    .flip-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .flip-btn-call, .flip-btn-wa {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 99px;
+      font-size: .8rem;
+      font-weight: 600;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+
+    .flip-btn-call {
+      background: var(--gold);
+      color: var(--ink);
+    }
+
+    .flip-btn-call:hover {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+    }
+
+    .flip-btn-wa {
+      background: #25D366;
+      color: var(--white);
+    }
+
+    .flip-btn-wa:hover {
+      background: #20ba5a;
+      transform: translateY(-2px);
+    }
 
     /* =============================================
        REFORMER HIGHLIGHT
@@ -829,7 +905,7 @@
     }
 
     /* =============================================
-       GALLERY (entegre edildi)
+       GALLERY
     ============================================= */
     .gallery-masonry {
       columns: 3;
@@ -942,19 +1018,6 @@
       line-height: 1.75;
       flex: 1;
     }
-
-    .blog-read {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 20px;
-      font-size: .75rem;
-      font-weight: 600;
-      color: var(--teal);
-      transition: gap .3s;
-    }
-
-    .blog-read:hover { gap: 10px; }
 
     /* =============================================
        CONTACT
@@ -1145,6 +1208,7 @@
       justify-content: center;
       font-size: 1rem;
       transition: var(--transition);
+      text-decoration: none;
     }
 
     .social-btn:hover {
@@ -1167,6 +1231,7 @@
       font-size: .84rem;
       color: rgba(255,255,255,.55);
       transition: color .3s;
+      text-decoration: none;
     }
 
     .footer-col ul li a:hover { color: var(--gold); }
@@ -1181,59 +1246,50 @@
     }
 
     /* =============================================
-       WHATSAPP FLOAT
+       FLOATING BUTTONS (CALL & WHATSAPP)
     ============================================= */
-    .whatsapp-float {
+    .float-buttons {
       position: fixed;
-      bottom: 30px; right: 30px;
+      bottom: 30px;
+      right: 30px;
       z-index: 999;
       display: flex;
       flex-direction: column;
-      align-items: flex-end;
-      gap: 10px;
+      gap: 15px;
     }
 
-    .whatsapp-bubble {
-      background: var(--white);
-      color: var(--ink);
-      padding: 10px 16px;
-      border-radius: 12px 12px 4px 12px;
-      font-size: .8rem;
-      font-weight: 500;
-      box-shadow: var(--shadow-mid);
-      opacity: 0;
-      transform: translateX(10px);
-      transition: var(--transition);
-      white-space: nowrap;
-    }
-
-    .whatsapp-float:hover .whatsapp-bubble {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    .whatsapp-btn {
-      width: 58px; height: 58px;
-      background: #25D366;
+    .float-btn {
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.6rem;
-      color: var(--white);
-      box-shadow: 0 8px 30px rgba(37,211,102,.45);
       transition: var(--transition);
-      animation: floatBounce 3s ease infinite;
+      box-shadow: 0 4px 20px rgba(0,0,0,.2);
+      cursor: pointer;
+      text-decoration: none;
     }
 
-    .whatsapp-btn:hover {
-      background: #20ba5a;
+    .float-btn-call {
+      background: var(--teal);
+      color: var(--white);
+    }
+
+    .float-btn-call:hover {
+      background: var(--teal-light);
       transform: scale(1.1);
     }
 
-    @keyframes floatBounce {
-      0%,100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
+    .float-btn-wa {
+      background: #25D366;
+      color: var(--white);
+    }
+
+    .float-btn-wa:hover {
+      background: #20ba5a;
+      transform: scale(1.1);
     }
 
     /* =============================================
@@ -1404,6 +1460,8 @@
       .hero-btns { flex-direction: column; align-items: center; }
       .stats-strip { grid-template-columns: repeat(2,1fr); }
       .stat-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,.15); }
+      .services-grid { grid-template-columns: 1fr; }
+      .flip-card { height: 420px; }
     }
   </style>
 </head>
@@ -1587,7 +1645,7 @@
     </div>
   </section>
 
-  <!-- ===================== SERVICES ===================== -->
+  <!-- ===================== SERVICES (FLIP CARDS) ===================== -->
   <section class="section" id="hizmetler" aria-label="Hizmetlerimiz">
     <div class="section-header" data-aos="fade-up">
       <div class="section-tag">Uzmanlık Alanları</div>
@@ -1596,15 +1654,107 @@
     </div>
 
     <div class="services-grid">
-      <article class="service-card" data-aos="fade-up">
-        <div class="service-img"><img src="/galeri/fizyoterapist1.webp" alt="Fizyoterapi seansı" loading="lazy" /><div class="service-icon-float">🦴</div></div>
-        <div class="service-body"><h3>Ortopedik Rehabilitasyon</h3><p>Kırık, çıkık, ameliyat sonrası iyileşme ve kas-iskelet sistemi bozukluklarında kapsamlı tedavi programları.</p><span class="service-link">Detaylı Bilgi →</span></div>
-      </article>
-      <article class="service-card" data-aos="fade-up" data-aos-delay="60"><div class="service-img"><img src="/galeri/fizyoterapist3.webp" alt="Nörolojik rehabilitasyon" loading="lazy" /><div class="service-icon-float">🧠</div></div><div class="service-body"><h3>Nörolojik Rehabilitasyon</h3><p>İnme, Parkinson, MS ve diğer nörolojik durumlar için özel egzersiz ve yeniden öğrenme teknikleri.</p><span class="service-link">Detaylı Bilgi →</span></div></article>
-      <article class="service-card" data-aos="fade-up" data-aos-delay="120"><div class="service-img"><img src="/galeri/fizyoterapist5.webp" alt="Sporcu rehabilitasyonu" loading="lazy" /><div class="service-icon-float">🏃</div></div><div class="service-body"><h3>Sporcu Rehabilitasyonu</h3><p>Spor yaralanmalarının tedavisi, performans artırma ve sakatlık önleme programları.</p><span class="service-link">Detaylı Bilgi →</span></div></article>
-      <article class="service-card" data-aos="fade-up" data-aos-delay="180"><div class="service-img"><img src="/galeri/fizyoterapist7.webp" alt="Manuel terapi" loading="lazy" /><div class="service-icon-float">🙌</div></div><div class="service-body"><h3>Manuel Terapi</h3><p>Eklem mobilizasyonu, yumuşak doku teknikleri ve manipülasyon ile ağrı ve hareket kısıtlılığının giderilmesi.</p><span class="service-link">Detaylı Bilgi →</span></div></article>
-      <article class="service-card" data-aos="fade-up" data-aos-delay="240"><div class="service-img"><img src="/galeri/fizyoterapist9.webp" alt="Elektroterapi" loading="lazy" /><div class="service-icon-float">⚡</div></div><div class="service-body"><h3>Elektroterapi Uygulamaları</h3><p>TENS, ultrason, lazer terapi ve diğer elektrofiziksel ajanlarla ağrı yönetimi ve doku iyileşmesi.</p><span class="service-link">Detaylı Bilgi →</span></div></article>
-      <article class="service-card" data-aos="fade-up" data-aos-delay="300"><div class="service-img"><img src="/galeri/fizyoterapist6.webp" alt="Egzersiz terapisi" loading="lazy" /><div class="service-icon-float">💪</div></div><div class="service-body"><h3>Egzersiz Terapisi</h3><p>Fonksiyonel hareket analizi ve kişiye özel egzersiz reçetesiyle kas gücü ve esnekliği artırma.</p><span class="service-link">Detaylı Bilgi →</span></div></article>
+      <div class="flip-card" data-aos="fade-up">
+        <div class="flip-card-inner">
+          <div class="flip-front">
+            <div class="service-img"><img src="/galeri/fizyoterapist1.webp" alt="Fizyoterapi seansı" loading="lazy" /><div class="service-icon-float">🦴</div></div>
+            <div class="service-body"><h3>Ortopedik Rehabilitasyon</h3><p>Kırık, çıkık, ameliyat sonrası iyileşme ve kas-iskelet sistemi bozukluklarında kapsamlı tedavi programları.</p></div>
+          </div>
+          <div class="flip-back">
+            <h3>Ortopedik Rehabilitasyon</h3>
+            <p>Kapsamlı değerlendirme ve kişiye özel egzersiz programları ile hızlı iyileşme süreci. Uzman fizyoterapist eşliğinde modern tedavi yöntemleri.</p>
+            <div class="flip-buttons">
+              <a href="tel:05435790888" class="flip-btn-call">📞 Hemen Ara</a>
+              <a href="https://wa.me/905435790888?text=Merhaba,%20Ortopedik%20Rehabilitasyon%20hakkında%20bilgi%20almak%20istiyorum." class="flip-btn-wa">💬 WhatsApp</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card" data-aos="fade-up" data-aos-delay="60">
+        <div class="flip-card-inner">
+          <div class="flip-front">
+            <div class="service-img"><img src="/galeri/fizyoterapist3.webp" alt="Nörolojik rehabilitasyon" loading="lazy" /><div class="service-icon-float">🧠</div></div>
+            <div class="service-body"><h3>Nörolojik Rehabilitasyon</h3><p>İnme, Parkinson, MS ve diğer nörolojik durumlar için özel egzersiz ve yeniden öğrenme teknikleri.</p></div>
+          </div>
+          <div class="flip-back">
+            <h3>Nörolojik Rehabilitasyon</h3>
+            <p>Nörolojik hastalıklarda fonksiyonel iyileşme, denge ve koordinasyon gelişimi için özel tedavi protokolleri.</p>
+            <div class="flip-buttons">
+              <a href="tel:05435790888" class="flip-btn-call">📞 Hemen Ara</a>
+              <a href="https://wa.me/905435790888?text=Merhaba,%20Nörolojik%20Rehabilitasyon%20hakkında%20bilgi%20almak%20istiyorum." class="flip-btn-wa">💬 WhatsApp</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card" data-aos="fade-up" data-aos-delay="120">
+        <div class="flip-card-inner">
+          <div class="flip-front">
+            <div class="service-img"><img src="/galeri/fizyoterapist5.webp" alt="Sporcu rehabilitasyonu" loading="lazy" /><div class="service-icon-float">🏃</div></div>
+            <div class="service-body"><h3>Sporcu Rehabilitasyonu</h3><p>Spor yaralanmalarının tedavisi, performans artırma ve sakatlık önleme programları.</p></div>
+          </div>
+          <div class="flip-back">
+            <h3>Sporcu Rehabilitasyonu</h3>
+            <p>Spor yaralanmalarında hızlı ve güvenli dönüş için özel rehabilitasyon programları, performans analizi.</p>
+            <div class="flip-buttons">
+              <a href="tel:05435790888" class="flip-btn-call">📞 Hemen Ara</a>
+              <a href="https://wa.me/905435790888?text=Merhaba,%20Sporcu%20Rehabilitasyonu%20hakkında%20bilgi%20almak%20istiyorum." class="flip-btn-wa">💬 WhatsApp</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card" data-aos="fade-up" data-aos-delay="180">
+        <div class="flip-card-inner">
+          <div class="flip-front">
+            <div class="service-img"><img src="/galeri/fizyoterapist7.webp" alt="Manuel terapi" loading="lazy" /><div class="service-icon-float">🙌</div></div>
+            <div class="service-body"><h3>Manuel Terapi</h3><p>Eklem mobilizasyonu, yumuşak doku teknikleri ve manipülasyon ile ağrı ve hareket kısıtlılığının giderilmesi.</p></div>
+          </div>
+          <div class="flip-back">
+            <h3>Manuel Terapi</h3>
+            <p>Özel manuel tekniklerle ağrıyı azaltma, eklem hareket açıklığını artırma ve kas gevşetme uygulamaları.</p>
+            <div class="flip-buttons">
+              <a href="tel:05435790888" class="flip-btn-call">📞 Hemen Ara</a>
+              <a href="https://wa.me/905435790888?text=Merhaba,%20Manuel%20Terapi%20hakkında%20bilgi%20almak%20istiyorum." class="flip-btn-wa">💬 WhatsApp</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card" data-aos="fade-up" data-aos-delay="240">
+        <div class="flip-card-inner">
+          <div class="flip-front">
+            <div class="service-img"><img src="/galeri/fizyoterapist9.webp" alt="Elektroterapi" loading="lazy" /><div class="service-icon-float">⚡</div></div>
+            <div class="service-body"><h3>Elektroterapi Uygulamaları</h3><p>TENS, ultrason, lazer terapi ve diğer elektrofiziksel ajanlarla ağrı yönetimi ve doku iyileşmesi.</p></div>
+          </div>
+          <div class="flip-back">
+            <h3>Elektroterapi</h3>
+            <p>Modern elektroterapi cihazları ile ağrı kontrolü, ödem azaltma ve doku iyileşmesini hızlandırma.</p>
+            <div class="flip-buttons">
+              <a href="tel:05435790888" class="flip-btn-call">📞 Hemen Ara</a>
+              <a href="https://wa.me/905435790888?text=Merhaba,%20Elektroterapi%20hakkında%20bilgi%20almak%20istiyorum." class="flip-btn-wa">💬 WhatsApp</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card" data-aos="fade-up" data-aos-delay="300">
+        <div class="flip-card-inner">
+          <div class="flip-front">
+            <div class="service-img"><img src="/galeri/fizyoterapist6.webp" alt="Egzersiz terapisi" loading="lazy" /><div class="service-icon-float">💪</div></div>
+            <div class="service-body"><h3>Egzersiz Terapisi</h3><p>Fonksiyonel hareket analizi ve kişiye özel egzersiz reçetesiyle kas gücü ve esnekliği artırma.</p></div>
+          </div>
+          <div class="flip-back">
+            <h3>Egzersiz Terapisi</h3>
+            <p>Kişiye özel egzersiz programları ile güçlendirme, esneklik kazandırma ve fonksiyonel kapasite artırma.</p>
+            <div class="flip-buttons">
+              <a href="tel:05435790888" class="flip-btn-call">📞 Hemen Ara</a>
+              <a href="https://wa.me/905435790888?text=Merhaba,%20Egzersiz%20Terapisi%20hakkında%20bilgi%20almak%20istiyorum." class="flip-btn-wa">💬 WhatsApp</a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -1621,7 +1771,7 @@
     </div>
   </section>
 
-  <!-- ===================== GALLERY (tüm görseller eklendi) ===================== -->
+  <!-- ===================== GALLERY ===================== -->
   <section class="section" aria-label="Galeri">
     <div class="section-header center" data-aos="fade-up">
       <div class="section-tag">Galerimiz</div>
@@ -1655,9 +1805,9 @@
   <section class="section" id="blog" aria-label="Blog yazıları">
     <div class="section-header" data-aos="fade-up"><div class="section-tag">Sağlık Köşesi</div><h2 class="section-title">Faydalı <em>Bilgiler</em></h2><p class="section-lead">Fizyoterapi, pilates ve sağlıklı yaşam hakkında uzman içerikler.</p></div>
     <div class="blog-grid">
-      <article class="blog-card" data-aos="fade-up"><div class="blog-img"><img src="/galeri/fizyoterapist1.webp" alt="Fizik tedavi nedir" loading="lazy" /></div><div class="blog-body"><div class="blog-cat">Genel Bilgi</div><h2>Fizik Tedavi Nedir? Kimler Yararlanabilir?</h2><p>Fizik tedavi ve rehabilitasyon, kas-iskelet sistemi rahatsızlıkları, nörolojik hastalıklar ve ameliyat sonrası iyileşme süreçlerinde kanıta dayalı yöntemler kullanan bir sağlık disiplinidir. Fizyoterapistler; ağrıyı azaltmak, hareket kabiliyetini artırmak ve yaşam kalitesini yükseltmek amacıyla manuel teknikler, elektrofiziksel ajanlar ve kişiye özel egzersiz programları uygular.</p><a href="#iletisim" class="blog-read">Devamını Oku →</a></div></article>
-      <article class="blog-card" data-aos="fade-up" data-aos-delay="120"><div class="blog-img"><img src="/galeri/fizyoterapist8.webp" alt="Reformer pilates faydaları" loading="lazy" /></div><div class="blog-body"><div class="blog-cat">Reformer Pilates</div><h2>Reformer Pilatesin Sağlığa 8 Kanıtlanmış Faydası</h2><p>Reformer pilates, geleneksel mat pilatesinden farklı olarak yay direnci sistemiyle çalışan özel bir alette uygulanır. Kronik bel ve boyun ağrısını azaltır; derin stabilizatör kasları güçlendirir; omurga hizalamasını düzeltir; postürü iyileştirir; ameliyat sonrası kas atrofisini önler.</p><a href="#iletisim" class="blog-read">Devamını Oku →</a></div></article>
-      <article class="blog-card" data-aos="fade-up" data-aos-delay="240"><div class="blog-img"><img src="/galeri/fizyoterapist5.webp" alt="Bel ve boyun ağrısı" loading="lazy" /></div><div class="blog-body"><div class="blog-cat">Ağrı Yönetimi</div><h2>Bel ve Boyun Ağrısı Nasıl Geçer? Uzman Önerileri</h2><p>Bel ve boyun ağrısı, dünya genelinde iş göremezliğin en yaygın ikinci nedenidir. Fizyoterapi kapsamında uygulanan manuel terapi, kuru iğneleme, derin ısıtma ve kişiye özel egzersizler hem ağrıyı giderir hem de nüks riskini azaltır. Erken müdahale kronikleşmeyi engeller.</p><a href="#iletisim" class="blog-read">Devamını Oku →</a></div></article>
+      <article class="blog-card" data-aos="fade-up"><div class="blog-img"><img src="/galeri/fizyoterapist1.webp" alt="Fizik tedavi nedir" loading="lazy" /></div><div class="blog-body"><div class="blog-cat">Genel Bilgi</div><h2>Fizik Tedavi Nedir? Kimler Yararlanabilir?</h2><p>Fizik tedavi ve rehabilitasyon, kas-iskelet sistemi rahatsızlıkları, nörolojik hastalıklar ve ameliyat sonrası iyileşme süreçlerinde kanıta dayalı yöntemler kullanan bir sağlık disiplinidir. Fizyoterapistler; ağrıyı azaltmak, hareket kabiliyetini artırmak ve yaşam kalitesini yükseltmek amacıyla manuel teknikler, elektrofiziksel ajanlar ve kişiye özel egzersiz programları uygular.</p></div></article>
+      <article class="blog-card" data-aos="fade-up" data-aos-delay="120"><div class="blog-img"><img src="/galeri/fizyoterapist8.webp" alt="Reformer pilates faydaları" loading="lazy" /></div><div class="blog-body"><div class="blog-cat">Reformer Pilates</div><h2>Reformer Pilatesin Sağlığa 8 Kanıtlanmış Faydası</h2><p>Reformer pilates, geleneksel mat pilatesinden farklı olarak yay direnci sistemiyle çalışan özel bir alette uygulanır. Kronik bel ve boyun ağrısını azaltır; derin stabilizatör kasları güçlendirir; omurga hizalamasını düzeltir; postürü iyileştirir; ameliyat sonrası kas atrofisini önler.</p></div></article>
+      <article class="blog-card" data-aos="fade-up" data-aos-delay="240"><div class="blog-img"><img src="/galeri/fizyoterapist5.webp" alt="Bel ve boyun ağrısı" loading="lazy" /></div><div class="blog-body"><div class="blog-cat">Ağrı Yönetimi</div><h2>Bel ve Boyun Ağrısı Nasıl Geçer? Uzman Önerileri</h2><p>Bel ve boyun ağrısı, dünya genelinde iş göremezliğin en yaygın ikinci nedenidir. Fizyoterapi kapsamında uygulanan manuel terapi, kuru iğneleme, derin ısıtma ve kişiye özel egzersizler hem ağrıyı giderir hem de nüks riskini azaltır. Erken müdahale kronikleşmeyi engeller.</p></div></article>
     </div>
   </section>
 
@@ -1665,16 +1815,19 @@
   <section class="section section-alt" id="iletisim" aria-label="İletişim">
     <div class="section-header" data-aos="fade-up"><div class="section-tag">Bize Ulaşın</div><h2 class="section-title">Randevu & <em>İletişim</em></h2><p class="section-lead">İzmir Seferihisar'daki kliniğimizden size ulaşalım veya siz bize gelin.</p></div>
     <div class="contact-grid">
-      <div class="contact-info"><div class="contact-info-item" data-aos="fade-right"><div class="contact-icon">📍</div><div><h4>Adres</h4><p>Hıdırılık Mahallesi 65 Sokak No:11 Daire 2<br />Seferihisar / İzmir</p></div></div><div class="contact-info-item" data-aos="fade-right" data-aos-delay="80"><div class="contact-icon">📞</div><div><h4>Telefon</h4><a href="tel:05435790888" style="font-size:.9rem;color:var(--teal);font-weight:600">0543 579 08 88</a></div></div><div class="contact-info-item" data-aos="fade-right" data-aos-delay="160"><div class="contact-icon">✉️</div><div><h4>E-Posta</h4><a href="mailto:arginbeyza@gmail.com" style="font-size:.9rem;color:var(--teal)">arginbeyza@gmail.com</a></div></div><div class="contact-info-item" data-aos="fade-right" data-aos-delay="240"><div class="contact-icon">🕐</div><div><h4>Çalışma Saatleri</h4><p>Pazartesi – Cuma: 09:00 – 19:00<br />Cumartesi: 09:00 – 14:00</p></div></div><div class="map-embed" data-aos="fade-up"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3127.6!2d26.8413!3d38.1962!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14b96b1234567890%3A0xabcdef!2sHidirlik+Mahallesi+65+Sokak+No:11+Seferihisar+Izmir!5e0!3m2!1str!2str!4v1700000000000!5m2!1str!2str" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Beyza Argın Fizyoterapi Kliniği Haritası" aria-label="Google Maps - Klinik konumu"></iframe></div></div>
-      <div class="contact-form" data-aos="fade-left"><div style="margin-bottom:28px"><h3 style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--ink);margin-bottom:6px">Randevu Talebi</h3><p style="font-size:.84rem;color:var(--ink-soft)">Formu doldurun, 24 saat içinde dönüş yapalım.</p></div><div class="form-row"><div class="form-group"><label for="name">Ad Soyad</label><input type="text" id="name" name="name" placeholder="Adınız Soyadınız" autocomplete="name" required /></div><div class="form-group"><label for="phone">Telefon</label><input type="tel" id="phone" name="phone" placeholder="0 5__ ___ __ __" autocomplete="tel" /></div></div><div class="form-group"><label for="email">E-Posta</label><input type="email" id="email" name="email" placeholder="ornek@mail.com" autocomplete="email" required /></div><div class="form-group"><label for="service">Hizmet</label><select id="service" name="service"><option value="">Hizmet seçiniz...</option><option>Ortopedik Rehabilitasyon</option><option>Nörolojik Rehabilitasyon</option><option>Sporcu Rehabilitasyonu</option><option>Manuel Terapi</option><option>Reformer Pilates</option><option>Elektroterapi</option><option>Egzersiz Terapisi</option><option>Kuru İğneleme</option><option>Postür Analizi</option><option>Evde Fizik Tedavi</option><option>Skolyoz Tedavisi</option><option>Lenfödem Tedavisi</option><option>Diğer</option></select></div><div class="form-group"><label for="message">Mesajınız</label><textarea id="message" name="message" placeholder="Şikayetinizi ve randevu talebinizi kısaca belirtin..."></textarea></div><button type="button" class="btn-submit" id="submitBtn">Randevu Talebini Gönder 📤</button><div id="formSuccess" style="display:none;margin-top:16px;padding:14px 18px;background:var(--sage-pale);border-radius:var(--radius-sm);color:var(--teal);font-size:.85rem;font-weight:600;text-align:center;">✅ Mesajınız alındı! En kısa sürede sizi arayacağız.</div></div>
+      <div class="contact-info"><div class="contact-info-item" data-aos="fade-right"><div class="contact-icon">📍</div><div><h4>Adres</h4><p>Hıdırılık Mahallesi 65 Sokak No:11 Daire 2<br />Seferihisar / İzmir</p></div></div><div class="contact-info-item" data-aos="fade-right" data-aos-delay="80"><div class="contact-icon">📞</div><div><h4>Telefon</h4><a href="tel:05435790888" style="font-size:.9rem;color:var(--teal);font-weight:600">0543 579 08 88</a></div></div><div class="contact-info-item" data-aos="fade-right" data-aos-delay="240"><div class="contact-icon">🕐</div><div><h4>Çalışma Saatleri</h4><p>Pazartesi – Cuma: 09:00 – 19:00<br />Cumartesi: 09:00 – 14:00</p></div></div><div class="map-embed" data-aos="fade-up"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3135.6610227409783!2d26.835329575835765!3d38.1945473718827!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14bbf3be2b9a8417%3A0x107da32529ed87f7!2sBianco%20Fizyoterapi%20Beyza%20ARGIN!5e0!3m2!1str!2str!4v1774555571349!5m2!1str!2str" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Beyza Argın Fizyoterapi Kliniği Haritası" aria-label="Google Maps - Klinik konumu"></iframe></div></div>
+      <div class="contact-form" data-aos="fade-left"><div style="margin-bottom:28px"><h3 style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--ink);margin-bottom:6px">Randevu Talebi</h3><p style="font-size:.84rem;color:var(--ink-soft)">Formu doldurun, 24 saat içinde dönüş yapalım.</p></div><div class="form-row"><div class="form-group"><label for="name">Ad Soyad</label><input type="text" id="name" name="name" placeholder="Adınız Soyadınız" autocomplete="name" required /></div><div class="form-group"><label for="phone">Telefon</label><input type="tel" id="phone" name="phone" placeholder="0 5__ ___ __ __" autocomplete="tel" /></div></div><div class="form-group"><label for="service">Hizmet</label><select id="service" name="service"><option value="">Hizmet seçiniz...</option><option>Ortopedik Rehabilitasyon</option><option>Nörolojik Rehabilitasyon</option><option>Sporcu Rehabilitasyonu</option><option>Manuel Terapi</option><option>Reformer Pilates</option><option>Elektroterapi</option><option>Egzersiz Terapisi</option><option>Kuru İğneleme</option><option>Postür Analizi</option><option>Evde Fizik Tedavi</option><option>Skolyoz Tedavisi</option><option>Lenfödem Tedavisi</option><option>Diğer</option></select></div><div class="form-group"><label for="message">Mesajınız</label><textarea id="message" name="message" placeholder="Şikayetinizi ve randevu talebinizi kısaca belirtin..."></textarea></div><button type="button" class="btn-submit" id="submitBtn">Randevu Talebini Gönder 📤</button><div id="formSuccess" style="display:none;margin-top:16px;padding:14px 18px;background:var(--sage-pale);border-radius:var(--radius-sm);color:var(--teal);font-size:.85rem;font-weight:600;text-align:center;">✅ Mesajınız alındı! En kısa sürede sizi arayacağız.</div></div>
     </div>
   </section>
 
   <!-- ===================== FOOTER ===================== -->
-  <footer><div class="footer-grid"><div class="footer-brand"><span class="footer-logo-name">Beyza Argın</span><span class="footer-logo-sub">Fizyoterapist</span><p>İzmir Seferihisar'da profesyonel fizyoterapi hizmetleri. Rehabilitasyon, Manuel Terapi ve Reformer Pilates.</p><div class="footer-social"><a href="#" class="social-btn" aria-label="Instagram">📸</a><a href="https://wa.me/905435790888" class="social-btn" aria-label="WhatsApp">💬</a><a href="mailto:arginbeyza@gmail.com" class="social-btn" aria-label="E-posta">✉️</a></div></div><div class="footer-col"><h4>Hizmetler</h4><ul><li><a href="#hizmetler">Ortopedik Rehabilitasyon</a></li><li><a href="#hizmetler">Manuel Terapi</a></li><li><a href="#hizmetler">Reformer Pilates</a></li><li><a href="#hizmetler">Kuru İğneleme</a></li><li><a href="#hizmetler">Sporcu Rehabilitasyonu</a></li></ul></div><div class="footer-col"><h4>Hızlı Bağlantılar</h4><ul><li><a href="#hero">Anasayfa</a></li><li><a href="#hakkimda">Hakkımda</a></li><li><a href="#hizmetler">Hizmetler</a></li><li><a href="#blog">Blog</a></li><li><a href="#iletisim">İletişim</a></li></ul></div><div class="footer-col"><h4>İletişim</h4><ul><li><a href="#">📍 Seferihisar / İzmir</a></li><li><a href="tel:05435790888">📞 0543 579 08 88</a></li><li><a href="mailto:arginbeyza@gmail.com">✉️ arginbeyza@gmail.com</a></li><li><a href="#">🕐 Pzt–Cum: 09–19</a></li></ul></div></div><div class="footer-bottom"><span>© 2025 Fizyoterapist Beyza Argın. Tüm hakları saklıdır.</span><span>İzmir Seferihisar Fizyoterapi Kliniği</span></div></footer>
+  <footer><div class="footer-grid"><div class="footer-brand"><span class="footer-logo-name">Beyza Argın</span><span class="footer-logo-sub">Fizyoterapist</span><p>İzmir Seferihisar'da profesyonel fizyoterapi hizmetleri. Rehabilitasyon, Manuel Terapi ve Reformer Pilates.</p><div class="footer-social"><a href="https://www.instagram.com/bianco_fizyoterapi" class="social-btn" target="_blank" rel="noopener noreferrer" aria-label="Instagram">📸</a><a href="https://wa.me/905435790888" class="social-btn" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">💬</a><a href="mailto:arginbeyza@gmail.com" class="social-btn" aria-label="E-posta">✉️</a></div></div><div class="footer-col"><h4>Hizmetler</h4><ul><li><a href="#hizmetler">Ortopedik Rehabilitasyon</a></li><li><a href="#hizmetler">Manuel Terapi</a></li><li><a href="#hizmetler">Reformer Pilates</a></li><li><a href="#hizmetler">Kuru İğneleme</a></li><li><a href="#hizmetler">Sporcu Rehabilitasyonu</a></li></ul></div><div class="footer-col"><h4>Hızlı Bağlantılar</h4><ul><li><a href="#hero">Anasayfa</a></li><li><a href="#hakkimda">Hakkımda</a></li><li><a href="#hizmetler">Hizmetler</a></li><li><a href="#blog">Blog</a></li><li><a href="#iletisim">İletişim</a></li></ul></div><div class="footer-col"><h4>İletişim</h4><ul><li><a href="#">📍 Seferihisar / İzmir</a></li><li><a href="tel:05435790888">📞 0543 579 08 88</a></li><li><a href="mailto:arginbeyza@gmail.com">✉️ arginbeyza@gmail.com</a></li><li><a href="#">🕐 Pzt–Cum: 09–19</a></li></ul></div></div><div class="footer-bottom"><span>© 2025 Fizyoterapist Beyza Argın. Tüm hakları saklıdır.</span><span>İzmir Seferihisar Fizyoterapi Kliniği</span></div></footer>
 
-  <!-- ===================== WHATSAPP FLOAT ===================== -->
-  <div class="whatsapp-float"><div class="whatsapp-bubble">Merhaba! 👋 Size nasıl yardımcı olabilirim?</div><a href="https://wa.me/905435790888?text=Merhaba%2C%20randevu%20almak%20istiyorum." class="whatsapp-btn" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp ile iletişime geçin">💬</a></div>
+  <!-- ===================== FLOATING BUTTONS ===================== -->
+  <div class="float-buttons">
+    <a href="tel:05435790888" class="float-btn float-btn-call" aria-label="Ara">📞</a>
+    <a href="https://wa.me/905435790888?text=Merhaba%2C%20randevu%20almak%20istiyorum." class="float-btn float-btn-wa" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">💬</a>
+  </div>
 
   <!-- ===================== AOS & SCRIPTS ===================== -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -1689,8 +1842,20 @@
     const counters = document.querySelectorAll('[data-count]');
     const counterObserver = new IntersectionObserver(entries => { entries.forEach(entry => { if (!entry.isIntersecting) return; const el = entry.target; const target = +el.dataset.count; let current = 0; const step = target / 60; const timer = setInterval(() => { current = Math.min(current + step, target); el.textContent = Math.floor(current) + (target >= 100 ? '%' : target >= 50 ? '+' : ''); if (current >= target) { el.textContent = target + (target >= 100 ? '%' : target >= 50 ? '+' : '+'); clearInterval(timer); } }, 25); counterObserver.unobserve(el); }); }, { threshold: .5 });
     counters.forEach(c => counterObserver.observe(c));
-    document.getElementById('submitBtn').addEventListener('click', () => { const name = document.getElementById('name').value.trim(); const email = document.getElementById('email').value.trim(); if (!name || !email) { alert('Lütfen ad soyad ve e-posta alanlarını doldurunuz.'); return; } document.getElementById('formSuccess').style.display = 'block'; document.getElementById('submitBtn').disabled = true; document.getElementById('submitBtn').textContent = '✅ Gönderildi'; });
+    document.getElementById('submitBtn').addEventListener('click', () => { const name = document.getElementById('name').value.trim(); const phone = document.getElementById('phone').value.trim(); if (!name || !phone) { alert('Lütfen ad soyad ve telefon alanlarını doldurunuz.'); return; } document.getElementById('formSuccess').style.display = 'block'; document.getElementById('submitBtn').disabled = true; document.getElementById('submitBtn').textContent = '✅ Gönderildi'; });
     window.addEventListener('scroll', () => { const hero = document.querySelector('#hero .hero-video-wrap'); if (hero && window.scrollY < window.innerHeight) hero.style.transform = `translateY(${window.scrollY * 0.3}px)`; }, { passive: true });
+    
+    // Flip card functionality
+    const flipCards = document.querySelectorAll('.flip-card');
+    flipCards.forEach(card => {
+      card.addEventListener('click', (e) => {
+        // Prevent flip when clicking on buttons inside back
+        if (e.target.closest('.flip-btn-call') || e.target.closest('.flip-btn-wa')) {
+          return;
+        }
+        card.classList.toggle('flipped');
+      });
+    });
   </script>
 </body>
 </html>

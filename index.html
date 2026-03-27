@@ -138,7 +138,6 @@
     .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
     /* ========= MOBILE MENU ========= */
-    /* FIX: Overlay backdrop */
     .mobile-overlay {
       display: none;
       position: fixed;
@@ -385,23 +384,108 @@
       background-size: 11px; background-repeat: no-repeat; background-position: center; flex-shrink: 0;
     }
 
-    /* ========= GALLERY ========= */
-    .gallery-masonry { columns: 3; column-gap: 20px; }
-    .gallery-item {
-      break-inside: avoid; margin-bottom: 20px;
-      border-radius: var(--radius); overflow: hidden; position: relative;
+    /* ========= MODERN HORIZONTAL GALLERY ========= */
+    .gallery-modern {
+      position: relative;
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: visible;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: var(--teal) var(--teal-pale);
+      padding-bottom: 20px;
+      cursor: grab;
+      user-select: none;
     }
-    .gallery-item img { width: 100%; display: block; transition: transform .6s; }
-    .gallery-item:hover img { transform: scale(1.04); }
-    /* FIX: Gallery overlay - moved out of media query, works on all screen sizes */
-    .gallery-item-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(42,124,138,.6), transparent);
-      opacity: 0; transition: opacity .4s;
-      display: flex; align-items: flex-end; padding: 20px;
+    .gallery-modern:active {
+      cursor: grabbing;
     }
-    .gallery-item:hover .gallery-item-overlay { opacity: 1; }
-    .gallery-item-label { color: white; font-size: .85rem; font-weight: 500; }
+    .gallery-track {
+      display: flex;
+      gap: 24px;
+      width: max-content;
+      padding: 8px 4px 8px 0;
+    }
+    .gallery-item-modern {
+      position: relative;
+      width: 340px;
+      flex-shrink: 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--white);
+      box-shadow: var(--shadow-soft);
+      transition: all var(--transition);
+      transform: scale(1);
+    }
+    @media (max-width: 640px) {
+      .gallery-item-modern { width: 280px; }
+    }
+    .gallery-item-modern:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-mid);
+    }
+    .gallery-img-modern {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .gallery-item-modern:hover .gallery-img-modern {
+      transform: scale(1.03);
+    }
+    .gallery-caption-modern {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+      padding: 48px 16px 16px;
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+    .gallery-item-modern:hover .gallery-caption-modern {
+      opacity: 1;
+    }
+    /* Scrollbar styling */
+    .gallery-modern::-webkit-scrollbar {
+      height: 6px;
+    }
+    .gallery-modern::-webkit-scrollbar-track {
+      background: var(--teal-pale);
+      border-radius: 10px;
+    }
+    .gallery-modern::-webkit-scrollbar-thumb {
+      background: var(--teal);
+      border-radius: 10px;
+    }
+    .gallery-scroll-hint {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 0.75rem;
+      color: var(--teal);
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      opacity: 0.7;
+    }
+    .gallery-scroll-hint i {
+      font-size: 1rem;
+      animation: slideHint 1.8s infinite;
+    }
+    @keyframes slideHint {
+      0% { transform: translateX(0); opacity: 0.4; }
+      50% { transform: translateX(6px); opacity: 1; }
+      100% { transform: translateX(0); opacity: 0.4; }
+    }
 
     /* ========= BLOG ========= */
     .blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
@@ -498,7 +582,6 @@
     /* ========= FOOTER ========= */
     footer { background: var(--ink); color: rgba(255,255,255,.7); padding: 72px 5% 28px; }
     .footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
-    /* FIX: Footer logo styles were missing */
     .footer-logo-name {
       display: block;
       font-family: 'Cormorant Garamond', serif;
@@ -528,14 +611,9 @@
       font-size: .8rem;
     }
 
-    /* ========= MOBILE BOTTOM BAR - FIX ========= */
-    /*
-      DÜZELTME: Scroll hide/show JS kodu kaldırıldı.
-      CSS ile her zaman görünür, hiçbir transform/display manipulation yok.
-      safe-area-inset için padding-bottom eklendi (notch'lu telefonlar için).
-    */
+    /* ========= MOBILE BOTTOM BAR ========= */
     .mobile-bottom-bar {
-      display: none; /* Desktop'ta gizli */
+      display: none;
       position: fixed;
       bottom: 0;
       left: 0;
@@ -553,7 +631,6 @@
       border-top: 1px solid rgba(0,0,0,.08);
       z-index: 9999;
       box-shadow: 0 -4px 20px rgba(0,0,0,.08);
-      /* FIX: transform none - hiçbir zaman gizlenmiyor */
       transform: translateY(0) !important;
     }
     .mb-item {
@@ -567,11 +644,8 @@
     .mb-item.ig i { color: #E1306C; }
     .mb-item.call i { color: var(--teal); }
 
-    /* Mobile bottom bar - sadece mobilde göster */
     @media (max-width: 767px) {
       .mobile-bottom-bar { display: flex; }
-      /* Hero içeriğine bottom bar kadar boşluk bırakmak gerekmez ama
-         iletişim ve footer'ın alt kısmı bar tarafından örtülmemesi için */
       footer { padding-bottom: 80px; }
     }
 
@@ -583,7 +657,6 @@
       .contact-grid { grid-template-columns: 1fr; }
       .testimonials-grid { grid-template-columns: 1fr 1fr; }
       .process-steps { grid-template-columns: 1fr 1fr; gap: 40px; }
-      .gallery-masonry { columns: 2; }
       .stats-strip { grid-template-columns: repeat(2,1fr); }
       .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
     }
@@ -595,7 +668,6 @@
       .testimonials-grid { grid-template-columns: 1fr; }
       .process-steps { grid-template-columns: 1fr; gap: 32px; }
       .footer-grid { grid-template-columns: 1fr; }
-      .gallery-masonry { columns: 1; }
       .hero-btns { flex-direction: column; align-items: center; }
       .stats-strip { grid-template-columns: repeat(2,1fr); }
       .services-grid { grid-template-columns: 1fr; }
@@ -630,7 +702,6 @@
     <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
   </nav>
 
-  <!-- FIX: Mobile menu overlay -->
   <div class="mobile-overlay" id="mobileOverlay"></div>
   <div class="mobile-menu" id="mobileMenu">
     <a href="#hero" class="mobile-link">Anasayfa</a>
@@ -641,7 +712,7 @@
     <a href="tel:05435790888">📞 0543 579 08 88</a>
   </div>
 
-  <!-- HERO -->
+  <!-- HERO (SAME) -->
  <section id="hero">
   <div class="hero-video-wrap">
     <video autoplay muted loop playsinline>
@@ -666,232 +737,6 @@
     <div class="hero-scroll-line"></div>
   </div>
 </section>
-
-<style>
-  /* Base Reset & Typography */
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  body {
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-    overflow-x: hidden;
-  }
-
-  /* Hero Section */
-  #hero {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    min-height: 700px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    color: white;
-  }
-
-  /* Video Background */
-  .hero-video-wrap {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-  }
-
-  .hero-video-wrap video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  /* Overlay for better text contrast */
-  .hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.3) 100%);
-    z-index: 1;
-  }
-
-  /* Content */
-  .hero-content {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    max-width: 1000px;
-    padding: 0 2rem;
-    animation: fadeInUp 1s ease-out;
-  }
-
-  /* Badge Styling - two lines exactly */
-  .hero-badge {
-    display: inline-block;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(8px);
-    padding: 0.6rem 1.5rem;
-    border-radius: 60px;
-    margin-bottom: 1.8rem;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    font-weight: 500;
-    letter-spacing: 0.3px;
-    text-align: center;
-    line-height: 1.4;
-    font-size: 0.85rem;
-  }
-
-  /* Headline */
-  .hero-h1 {
-    font-size: 3.5rem;
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 1.2rem;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  }
-
-  .hero-h1 em {
-    font-style: normal;
-    background: linear-gradient(120deg, #F5E7D9, #F0D8B0);
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-    font-weight: 700;
-  }
-
-  /* Subtitle */
-  .hero-sub {
-    font-size: 1.2rem;
-    opacity: 0.9;
-    margin-bottom: 2rem;
-    line-height: 1.5;
-    font-weight: 400;
-  }
-
-  /* Buttons */
-  .hero-btns {
-    display: flex;
-    gap: 1.2rem;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .btn-primary {
-    display: inline-block;
-    background: #C49A6C;
-    color: white;
-    padding: 0.9rem 2rem;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    border: none;
-    font-size: 1rem;
-  }
-
-  .btn-primary:hover {
-    background: #B28554;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-  }
-
-  .btn-outline {
-    display: inline-block;
-    background: transparent;
-    border: 2px solid rgba(255, 255, 255, 0.8);
-    color: white;
-    padding: 0.9rem 2rem;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(4px);
-    font-size: 1rem;
-  }
-
-  .btn-outline:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: white;
-    transform: translateY(-2px);
-  }
-
-  /* Scroll indicator */
-  .hero-scroll {
-    position: absolute;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    color: white;
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 1px;
-    opacity: 0.7;
-    transition: opacity 0.3s;
-  }
-
-  .hero-scroll-line {
-    width: 2px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.6);
-    margin-top: 0.2rem;
-  }
-
-  /* Animation */
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .hero-h1 {
-      font-size: 2.3rem;
-    }
-    .hero-sub {
-      font-size: 1rem;
-    }
-    .hero-badge {
-      font-size: 0.7rem;
-      padding: 0.4rem 1.2rem;
-    }
-    .hero-btns {
-      gap: 0.8rem;
-    }
-    .btn-primary, .btn-outline {
-      padding: 0.7rem 1.4rem;
-      font-size: 0.9rem;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .hero-h1 {
-      font-size: 1.8rem;
-    }
-    .hero-content {
-      padding: 0 1.2rem;
-    }
-    .hero-scroll {
-      bottom: 1rem;
-    }
-  }
-</style>
 
   <!-- STATS -->
   <div class="stats-strip">
@@ -989,13 +834,19 @@
     </div>
   </section>
 
-  <!-- GALLERY -->
+  <!-- MODERN HORIZONTAL GALLERY -->
   <section class="section">
     <div class="section-header center">
       <div class="section-tag">Galerimiz</div>
       <h2 class="section-title">Kliniğimizden <em>Görüntüler</em></h2>
     </div>
-    <div class="gallery-masonry" id="galleryMasonry"></div>
+    <div class="gallery-modern" id="horizontalGallery">
+      <div class="gallery-track" id="galleryTrack"></div>
+    </div>
+    <div class="gallery-scroll-hint">
+      <span>Kaydırarak keşfedin</span>
+      <i class="fas fa-arrow-right"></i>
+    </div>
   </section>
 
   <!-- TESTIMONIALS -->
@@ -1202,7 +1053,7 @@
     </div>
   </footer>
 
-  <!-- MOBILE BOTTOM BAR — FIX: Her zaman görünür, JS hide/show kaldırıldı -->
+  <!-- MOBILE BOTTOM BAR -->
   <div class="mobile-bottom-bar">
     <a href="https://wa.me/905435790888" class="mb-item wa">
       <i class="fab fa-whatsapp"></i>
@@ -1268,7 +1119,7 @@
       });
     });
 
-    // ========= COUNTER ANIMATION — FIX: data-suffix kullanımı =========
+    // ========= COUNTER ANIMATION =========
     const counters = document.querySelectorAll('[data-count]');
     const obs = new IntersectionObserver(entries => {
       entries.forEach(entry => {
@@ -1340,7 +1191,6 @@ const serviceData = [
         servicesGrid.appendChild(card);
       });
 
-      // FIX: Flip click — link tıklamalarında flip engellendi
       servicesGrid.addEventListener('click', e => {
         const card = e.target.closest('.flip-card');
         if (!card) return;
@@ -1349,98 +1199,72 @@ const serviceData = [
       });
     }
 
-    // ========= GALLERY =========
-    const galleryArr = [
-      "/galeri/fizyoterapist1.webp","/galeri/fizyoterapist2.webp","/galeri/fizyoterapist3.webp",
-      "/galeri/fizyoterapist4.webp","/galeri/fizyoterapist5.webp","/galeri/fizyoterapist6.webp",
-      "/galeri/fizyoterapist7.webp","/galeri/fizyoterapist8.webp","/galeri/fizyoterapist9.webp",
+    // ========= HORIZONTAL GALLERY =========
+    const galleryImages = [
+      "/galeri/fizyoterapist1.webp",
+      "/galeri/fizyoterapist2.webp",
+      "/galeri/fizyoterapist3.webp",
+      "/galeri/fizyoterapist4.webp",
+      "/galeri/fizyoterapist5.webp",
+      "/galeri/fizyoterapist6.webp",
+      "/galeri/fizyoterapist7.webp",
+      "/galeri/fizyoterapist8.webp",
+      "/galeri/fizyoterapist9.webp",
       "/galeri/fizyoterapist10.webp"
     ];
-    const galleryDiv = document.getElementById('galleryMasonry');
-    if (galleryDiv) {
-      galleryArr.forEach(src => {
+
+    const track = document.getElementById('galleryTrack');
+    if (track) {
+      galleryImages.forEach((src, idx) => {
         const item = document.createElement('div');
-        item.className = 'gallery-item';
-        item.innerHTML = `<img src="${src}" loading="lazy" alt="Klinik Galerisi" /><div class="gallery-item-overlay"><span class="gallery-item-label">Kliniğimiz</span></div>`;
-        galleryDiv.appendChild(item);
+        item.className = 'gallery-item-modern';
+        item.innerHTML = `
+          <img src="${src}" alt="Klinik Görsel ${idx+1}" class="gallery-img-modern" loading="lazy" />
+          <div class="gallery-caption-modern">
+            <span>✨ Kliniğimizden bir kare</span>
+          </div>
+        `;
+        track.appendChild(item);
       });
     }
 
-   // ========= CONTACT FORM - WHATSAPP INTEGRATION =========
+    // ========= CONTACT FORM =========
 document.getElementById('submitBtn').addEventListener('click', function(e) {
   e.preventDefault();
   
-  // Form verilerini al
   const name = document.getElementById('name').value.trim();
   const phone = document.getElementById('phone').value.trim();
   const service = document.getElementById('service').value;
   const date = document.getElementById('date') ? document.getElementById('date').value.trim() : '';
   const message = document.getElementById('message').value.trim();
   
-  // Validasyon
-  if (!name) {
-    alert('Lütfen adınızı ve soyadınızı girin.');
-    document.getElementById('name').focus();
-    return;
-  }
-  
-  if (!phone) {
-    alert('Lütfen telefon numaranızı girin.');
-    document.getElementById('phone').focus();
-    return;
-  }
-  
-  // Telefon numarası formatını kontrol et (isteğe bağlı basit kontrol)
+  if (!name) { alert('Lütfen adınızı ve soyadınızı girin.'); document.getElementById('name').focus(); return; }
+  if (!phone) { alert('Lütfen telefon numaranızı girin.'); document.getElementById('phone').focus(); return; }
   const phoneRegex = /^[0-9\s\(\)\+\-]{10,15}$/;
-  if (!phoneRegex.test(phone)) {
-    alert('Lütfen geçerli bir telefon numarası girin.');
-    return;
-  }
+  if (!phoneRegex.test(phone)) { alert('Lütfen geçerli bir telefon numarası girin.'); return; }
   
-  // WhatsApp mesajını oluştur
   let whatsappMessage = `🏥 *YENİ RANDEVU TALEBİ*%0a%0a`;
   whatsappMessage += `👤 *Ad Soyad:* ${encodeURIComponent(name)}%0a`;
   whatsappMessage += `📞 *Telefon:* ${encodeURIComponent(phone)}%0a`;
   whatsappMessage += `🩺 *Hizmet:* ${encodeURIComponent(service)}%0a`;
-  
-  if (date) {
-    whatsappMessage += `📅 *Tarih Tercihi:* ${encodeURIComponent(date)}%0a`;
-  }
-  
-  if (message) {
-    whatsappMessage += `%0a💬 *Mesaj:*%0a${encodeURIComponent(message)}%0a`;
-  }
-  
+  if (date) { whatsappMessage += `📅 *Tarih Tercihi:* ${encodeURIComponent(date)}%0a`; }
+  if (message) { whatsappMessage += `%0a💬 *Mesaj:*%0a${encodeURIComponent(message)}%0a`; }
   whatsappMessage += `%0a⏰ *Talep Tarihi:* ${encodeURIComponent(new Date().toLocaleString('tr-TR'))}`;
   
-  // WhatsApp numarası (başında 90, 0 veya +90 olmadan sadece numara)
-  const whatsappNumber = "905435790888"; // 0543 579 08 88
-  
-  // WhatsApp linkini oluştur
+  const whatsappNumber = "905435790888";
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
   
-  // Başarı mesajını göster ve linke yönlendir
   const successDiv = document.getElementById('formSuccess');
   successDiv.innerHTML = `✅ Talep oluşturuldu! WhatsApp'a yönlendiriliyorsunuz...<br><small>Mesajınız otomatik olarak hazırlanacaktır.</small>`;
   successDiv.style.display = 'block';
   
-  // Butonu devre dışı bırak
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   btn.style.opacity = '0.7';
   btn.textContent = '📱 Yönlendiriliyor...';
   
-  // 1 saniye sonra WhatsApp'a yönlendir
   setTimeout(() => {
     window.open(whatsappUrl, '_blank');
-    
-    // Formu temizleme seçeneği (isteğe bağlı)
-    // document.getElementById('name').value = '';
-    // document.getElementById('phone').value = '';
-    // document.getElementById('message').value = '';
-    // if(document.getElementById('date')) document.getElementById('date').value = '';
-    
-    // Butonu yeniden aktif et (opsiyonel)
     setTimeout(() => {
       btn.disabled = false;
       btn.style.opacity = '1';
@@ -1448,7 +1272,6 @@ document.getElementById('submitBtn').addEventListener('click', function(e) {
     }, 3000);
   }, 800);
 });
-
   </script>
 </body>
 </html>

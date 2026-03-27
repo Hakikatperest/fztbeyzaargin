@@ -16,7 +16,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
   <style>
-    /* ========= RESET & VARIABLES - TAM TASARIM KORUNDU ========= */
+    /* ========= RESET & VARIABLES ========= */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { overflow-x: hidden; width: 100%; position: relative; }
     :root {
@@ -50,9 +50,6 @@
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: var(--cream); }
     ::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 99px; }
-    body {
-  padding-bottom: 80px;
-}
 
     /* ========= NAVBAR ========= */
     #navbar {
@@ -88,6 +85,7 @@
       letter-spacing: 2.5px;
       text-transform: uppercase;
       color: rgba(255,255,255,.7);
+      transition: color .3s;
     }
     #navbar.scrolled .nav-logo-name { color: var(--ink); }
     #navbar.scrolled .nav-logo-sub { color: var(--teal); }
@@ -117,6 +115,7 @@
       font-size: .78rem !important;
       font-weight: 600 !important;
       box-shadow: 0 4px 20px rgba(201,169,110,.4);
+      transition: var(--transition);
     }
     .nav-cta:hover { background: var(--gold-light); transform: translateY(-2px); }
     .hamburger {
@@ -137,8 +136,22 @@
     .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
     .hamburger.open span:nth-child(2) { opacity: 0; }
     .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-    .mobile-menu {
+
+    /* ========= MOBILE MENU ========= */
+    /* FIX: Overlay backdrop */
+    .mobile-overlay {
       display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 1040;
+      opacity: 0;
+      transition: opacity .35s;
+    }
+    .mobile-overlay.open { opacity: 1; }
+
+    .mobile-menu {
+      display: flex;
       position: fixed;
       top: 0; right: -100%;
       width: min(320px, 100vw);
@@ -203,23 +216,43 @@
       padding: 15px 36px; background: transparent; color: var(--white);
       border: 1.5px solid rgba(255,255,255,.5); border-radius: 99px;
       font-size: .88rem; font-weight: 500; transition: var(--transition);
-      cursor: pointer;
+      cursor: pointer; display: inline-block;
     }
     .btn-outline:hover { background: rgba(255,255,255,.1); transform: translateY(-3px); }
     .hero-scroll {
       position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
       z-index: 2; display: flex; flex-direction: column; align-items: center;
-      color: rgba(255,255,255,.6); font-size: .65rem; letter-spacing: 2px;
+      color: rgba(255,255,255,.6); font-size: .65rem; letter-spacing: 2px; gap: 8px;
     }
-    .hero-scroll-line { width: 1px; height: 48px; background: linear-gradient(to bottom, rgba(255,255,255,.6), transparent); animation: scrollLine 2s ease infinite; }
-    @keyframes scrollLine { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); } 100% { transform: scaleY(0); transform-origin: bottom; } }
+    .hero-scroll-line {
+      width: 1px; height: 48px;
+      background: linear-gradient(to bottom, rgba(255,255,255,.6), transparent);
+      animation: scrollLine 2s ease infinite;
+    }
+    @keyframes scrollLine {
+      0% { transform: scaleY(0); transform-origin: top; }
+      50% { transform: scaleY(1); }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
 
     /* ========= STATS ========= */
-    .stats-strip { background: var(--teal); padding: 32px 5%; display: grid; grid-template-columns: repeat(4, 1fr); }
-    .stat-item { text-align: center; padding: 16px 20px; border-right: 1px solid rgba(255,255,255,.15); }
+    .stats-strip {
+      background: var(--teal); padding: 32px 5%;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+    }
+    .stat-item {
+      text-align: center; padding: 16px 20px;
+      border-right: 1px solid rgba(255,255,255,.15);
+    }
     .stat-item:last-child { border-right: none; }
-    .stat-num { font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; font-weight: 600; color: var(--white); }
-    .stat-label { font-size: .72rem; color: rgba(255,255,255,.7); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px; }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.8rem; font-weight: 600; color: var(--white);
+    }
+    .stat-label {
+      font-size: .72rem; color: rgba(255,255,255,.7);
+      letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px;
+    }
 
     /* ========= SECTION HELPERS ========= */
     .section { padding: 100px 5%; }
@@ -245,158 +278,845 @@
     /* ========= ABOUT ========= */
     .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
     .about-img-stack { position: relative; height: 580px; }
-    .about-img-main { position: absolute; top: 0; left: 0; width: 82%; height: 86%; border-radius: 24px; overflow: hidden; box-shadow: var(--shadow-deep); }
+    .about-img-main {
+      position: absolute; top: 0; left: 0; width: 82%; height: 86%;
+      border-radius: 24px; overflow: hidden; box-shadow: var(--shadow-deep);
+    }
     .about-img-main img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s; }
-    .about-img-accent { position: absolute; bottom: 0; right: 0; width: 55%; height: 52%; border-radius: 20px; overflow: hidden; border: 4px solid var(--cream); }
-    .about-badge { position: absolute; top: 40px; right: 0; background: var(--gold); color: var(--ink); padding: 14px 20px; border-radius: 14px; }
+    .about-img-accent {
+      position: absolute; bottom: 0; right: 0; width: 55%; height: 52%;
+      border-radius: 20px; overflow: hidden; border: 4px solid var(--cream);
+    }
+    .about-img-accent img { width: 100%; height: 100%; object-fit: cover; }
+    .about-badge {
+      position: absolute; top: 40px; right: 0;
+      background: var(--gold); color: var(--ink); padding: 14px 20px; border-radius: 14px;
+    }
     .about-badge-num { font-family: 'Cormorant Garamond'; font-size: 2rem; font-weight: 700; display: block; }
     .about-badge-text { font-size: .65rem; letter-spacing: 1.5px; text-transform: uppercase; }
     .about-bio { font-size: .98rem; color: var(--ink-soft); line-height: 1.85; margin-bottom: 20px; }
     .about-highlights { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 20px 0; }
-    .highlight-item { display: flex; align-items: flex-start; gap: 10px; padding: 16px 18px; background: var(--sage-pale); border-radius: var(--radius-sm); border-left: 3px solid var(--sage); }
-    .highlight-icon { width: 34px; height: 34px; background: var(--white); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .highlight-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 16px 18px; background: var(--sage-pale);
+      border-radius: var(--radius-sm); border-left: 3px solid var(--sage);
+    }
+    .highlight-icon {
+      width: 34px; height: 34px; background: var(--white);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
 
     /* ========= SERVICES FLIP ========= */
     .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
     .flip-card { background: transparent; height: 380px; perspective: 1000px; cursor: pointer; }
-    .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; border-radius: var(--radius); }
+    .flip-card-inner {
+      position: relative; width: 100%; height: 100%;
+      transition: transform 0.6s; transform-style: preserve-3d; border-radius: var(--radius);
+    }
     .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
-    .flip-front, .flip-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: var(--radius); overflow: hidden; }
+    .flip-front, .flip-back {
+      position: absolute; width: 100%; height: 100%;
+      backface-visibility: hidden; border-radius: var(--radius); overflow: hidden;
+    }
     .flip-front { background: var(--white); border: 1px solid var(--border); box-shadow: var(--shadow-soft); }
     .flip-front .service-img { width: 100%; height: 200px; overflow: hidden; position: relative; }
     .flip-front .service-img img { width: 100%; height: 100%; object-fit: cover; }
-    .service-icon-float { position: absolute; bottom: -16px; left: 24px; width: 44px; height: 44px; background: var(--teal); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; color: white; box-shadow: 0 6px 20px rgba(42,124,138,.35); }
+    .service-icon-float {
+      position: absolute; bottom: -16px; left: 24px;
+      width: 44px; height: 44px; background: var(--teal); border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem; color: white; box-shadow: 0 6px 20px rgba(42,124,138,.35);
+    }
     .service-body { padding: 28px 24px 24px; }
     .service-body h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 600; margin-bottom: 8px; }
     .service-body p { font-size: .83rem; color: var(--ink-soft); }
-    .flip-back { background: var(--teal); color: white; transform: rotateY(180deg); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 32px 24px; text-align: center; }
+    .flip-back {
+      background: var(--teal); color: white; transform: rotateY(180deg);
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      padding: 32px 24px; text-align: center;
+    }
     .flip-back h3 { font-family: 'Cormorant Garamond'; font-size: 1.4rem; margin-bottom: 16px; }
     .flip-back p { font-size: .85rem; margin-bottom: 24px; opacity: 0.9; }
     .flip-buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
-    .flip-btn-call, .flip-btn-wa { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 99px; font-size: .8rem; font-weight: 600; transition: var(--transition); }
+    .flip-btn-call, .flip-btn-wa {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px; border-radius: 99px; font-size: .8rem; font-weight: 600;
+      transition: var(--transition);
+    }
     .flip-btn-call { background: var(--gold); color: var(--ink); }
     .flip-btn-wa { background: #25D366; color: white; }
+    .flip-btn-call:hover { transform: translateY(-2px); }
+    .flip-btn-wa:hover { transform: translateY(-2px); }
 
     /* ========= REFORMER ========= */
-    .reformer-section { position: relative; overflow: hidden; min-height: 600px; display: flex; align-items: stretch; }
+    .reformer-section {
+      position: relative; overflow: hidden; min-height: 600px; display: flex; align-items: stretch;
+    }
     .reformer-bg { position: absolute; inset: 0; z-index: 0; }
     .reformer-bg img { width: 100%; height: 100%; object-fit: cover; }
-    .reformer-overlay { position: absolute; inset: 0; background: linear-gradient(100deg, rgba(10,30,50,.9) 0%, rgba(10,30,50,.85) 40%, rgba(42,124,138,.4) 100%); z-index: 1; }
+    .reformer-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(100deg, rgba(10,30,50,.9) 0%, rgba(10,30,50,.85) 40%, rgba(42,124,138,.4) 100%);
+      z-index: 1;
+    }
     .reformer-content { position: relative; z-index: 2; padding: 100px 5%; max-width: 680px; }
-    .reformer-tag { display: inline-flex; padding: 8px 18px; background: rgba(201,169,110,.15); border: 1px solid rgba(201,169,110,.4); border-radius: 99px; color: var(--gold-light); font-size: .68rem; letter-spacing: 2.5px; margin-bottom: 24px; }
+    .reformer-content h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 4vw, 3rem); color: var(--white); font-weight: 400;
+      line-height: 1.2; margin-bottom: 20px;
+    }
+    .reformer-content h2 em { font-style: italic; color: var(--gold-light); }
+    .reformer-content p { color: rgba(255,255,255,.8); font-size: .95rem; line-height: 1.8; }
+    .reformer-tag {
+      display: inline-flex; padding: 8px 18px;
+      background: rgba(201,169,110,.15); border: 1px solid rgba(201,169,110,.4);
+      border-radius: 99px; color: var(--gold-light);
+      font-size: .68rem; letter-spacing: 2.5px; margin-bottom: 24px;
+    }
     .reformer-features { margin: 24px 0; }
-    .reformer-feat { display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,.85); font-size: .88rem; margin-bottom: 12px; }
-    .reformer-feat::before { content: ''; width: 18px; height: 18px; background: var(--gold); border-radius: 50%; display: inline-block; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231A1A2E' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E"); background-size: 11px; background-repeat: no-repeat; background-position: center; flex-shrink: 0; }
+    .reformer-feat {
+      display: flex; align-items: center; gap: 12px;
+      color: rgba(255,255,255,.85); font-size: .88rem; margin-bottom: 12px;
+    }
+    .reformer-feat::before {
+      content: ''; width: 18px; height: 18px; background: var(--gold); border-radius: 50%;
+      display: inline-block;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231A1A2E' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+      background-size: 11px; background-repeat: no-repeat; background-position: center; flex-shrink: 0;
+    }
 
-    /* ========= GALLERY, BLOG, CONTACT, TESTIMONIALS, PROCESS ========= */
+    /* ========= GALLERY ========= */
     .gallery-masonry { columns: 3; column-gap: 20px; }
-    .gallery-item { break-inside: avoid; margin-bottom: 20px; border-radius: var(--radius); overflow: hidden; position: relative; }
+    .gallery-item {
+      break-inside: avoid; margin-bottom: 20px;
+      border-radius: var(--radius); overflow: hidden; position: relative;
+    }
+    .gallery-item img { width: 100%; display: block; transition: transform .6s; }
+    .gallery-item:hover img { transform: scale(1.04); }
+    /* FIX: Gallery overlay - moved out of media query, works on all screen sizes */
+    .gallery-item-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(42,124,138,.6), transparent);
+      opacity: 0; transition: opacity .4s;
+      display: flex; align-items: flex-end; padding: 20px;
+    }
+    .gallery-item:hover .gallery-item-overlay { opacity: 1; }
+    .gallery-item-label { color: white; font-size: .85rem; font-weight: 500; }
+
+    /* ========= BLOG ========= */
     .blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
-    .blog-card { background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-soft); border: 1px solid var(--border); }
+    .blog-card {
+      background: var(--white); border-radius: var(--radius); overflow: hidden;
+      box-shadow: var(--shadow-soft); border: 1px solid var(--border);
+      transition: transform .3s, box-shadow .3s;
+    }
+    .blog-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-mid); }
     .blog-img { height: 220px; overflow: hidden; }
     .blog-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s; }
+    .blog-card:hover .blog-img img { transform: scale(1.05); }
     .blog-body { padding: 28px 24px; }
-    .blog-cat { font-size: .68rem; font-weight: 600; letter-spacing: 2px; color: var(--teal); margin-bottom: 10px; text-transform: uppercase; }
+    .blog-cat {
+      font-size: .68rem; font-weight: 600; letter-spacing: 2px;
+      color: var(--teal); margin-bottom: 10px; text-transform: uppercase;
+    }
+    .blog-body h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; margin-bottom: 8px; line-height: 1.3; }
+    .blog-body p { font-size: .84rem; color: var(--ink-soft); line-height: 1.7; }
+
+    /* ========= CONTACT ========= */
     .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; }
-    .contact-form { background: var(--white); border-radius: var(--radius); padding: 42px 38px; box-shadow: var(--shadow-mid); border: 1px solid var(--border); }
+    .contact-form {
+      background: var(--white); border-radius: var(--radius);
+      padding: 42px 38px; box-shadow: var(--shadow-mid); border: 1px solid var(--border);
+    }
     .form-group { margin-bottom: 18px; }
-    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 13px 16px; background: var(--cream); border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; }
-    .btn-submit { width: 100%; padding: 16px; background: var(--teal); color: white; border: none; border-radius: 99px; font-weight: 600; cursor: pointer; }
+    .form-group label { display: block; font-size: .82rem; font-weight: 500; margin-bottom: 6px; color: var(--ink-soft); }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%; padding: 13px 16px;
+      background: var(--cream); border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm); font-family: inherit; font-size: .9rem;
+      transition: border-color .3s;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none; border-color: var(--teal);
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .btn-submit {
+      width: 100%; padding: 16px; background: var(--teal); color: white;
+      border: none; border-radius: 99px; font-weight: 600; cursor: pointer;
+      font-size: .92rem; transition: var(--transition);
+    }
+    .btn-submit:hover { background: var(--teal-light); transform: translateY(-2px); }
+    .btn-submit:disabled { opacity: .7; cursor: default; transform: none; }
+    .contact-icon {
+      width: 48px; height: 48px; background: var(--teal-pale);
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0;
+    }
+    .contact-info-item { display: flex; gap: 16px; margin-bottom: 24px; align-items: flex-start; }
+    .contact-info-item h4 { font-size: .9rem; margin-bottom: 4px; }
+    .contact-info-item p, .contact-info-item a { font-size: .88rem; color: var(--ink-soft); }
+    .map-embed { border-radius: var(--radius); overflow: hidden; margin-top: 20px; }
+
+    /* ========= TESTIMONIALS ========= */
     .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-    .testimonial-card { background: var(--white); border-radius: var(--radius); padding: 32px 28px; box-shadow: var(--shadow-soft); border: 1px solid var(--border); position: relative; }
-    .process-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; }
+    .testimonial-card {
+      background: var(--white); border-radius: var(--radius); padding: 32px 28px;
+      box-shadow: var(--shadow-soft); border: 1px solid var(--border); position: relative;
+    }
+    .stars { color: var(--gold); margin-bottom: 12px; letter-spacing: 2px; }
+    .testimonial-quote {
+      font-family: 'Cormorant Garamond'; font-size: 3rem; color: var(--teal-pale);
+      position: absolute; top: 10px; left: 20px; line-height: 1;
+    }
+    .testimonial-text { font-size: .9rem; color: var(--ink-soft); line-height: 1.75; }
+    .testimonial-author { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
+    .testimonial-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
+    .testimonial-name { font-weight: 600; font-size: .9rem; }
+    .testimonial-role { font-size: .78rem; color: var(--teal); }
+
+    /* ========= PROCESS ========= */
+    .process-steps {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0; position: relative;
+    }
     .process-step { text-align: center; padding: 0 20px; }
-    .step-num { width: 64px; height: 64px; border-radius: 50%; background: var(--white); border: 2px solid var(--teal); display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond'; font-size: 1.4rem; font-weight: 600; color: var(--teal); margin: 0 auto 24px; transition: var(--transition); }
+    .step-num {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: var(--white); border: 2px solid var(--teal);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond'; font-size: 1.4rem; font-weight: 600;
+      color: var(--teal); margin: 0 auto 24px; transition: var(--transition);
+    }
+    .process-step:hover .step-num { background: var(--teal); color: white; }
+    .process-step h3 { font-size: 1rem; margin-bottom: 8px; }
+    .process-step p { font-size: .85rem; color: var(--ink-soft); line-height: 1.7; }
+
+    /* ========= FOOTER ========= */
     footer { background: var(--ink); color: rgba(255,255,255,.7); padding: 72px 5% 28px; }
-    .footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 48px; }
-   .mobile-bottom-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
+    .footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+    /* FIX: Footer logo styles were missing */
+    .footer-logo-name {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; font-weight: 600; color: var(--white); line-height: 1;
+    }
+    .footer-logo-sub {
+      display: block;
+      font-size: .65rem; letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--teal-light); margin-bottom: 16px; margin-top: 2px;
+    }
+    .footer-brand p { font-size: .84rem; line-height: 1.8; }
+    .footer-col h4 { color: var(--white); font-size: .9rem; margin-bottom: 16px; font-weight: 600; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul li a { font-size: .84rem; color: rgba(255,255,255,.55); transition: color .3s; }
+    .footer-col ul li a:hover { color: var(--gold); }
+    .footer-social { display: flex; gap: 10px; margin-top: 20px; }
+    .social-btn {
+      width: 38px; height: 38px; background: rgba(255,255,255,.07);
+      border-radius: 9px; display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; transition: .3s;
+    }
+    .social-btn:hover { background: rgba(255,255,255,.15); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.08); padding-top: 24px;
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+      font-size: .8rem;
+    }
 
-  height: 70px;
+    /* ========= MOBILE BOTTOM BAR - FIX ========= */
+    /*
+      DÜZELTME: Scroll hide/show JS kodu kaldırıldı.
+      CSS ile her zaman görünür, hiçbir transform/display manipulation yok.
+      safe-area-inset için padding-bottom eklendi (notch'lu telefonlar için).
+    */
+    .mobile-bottom-bar {
+      display: none; /* Desktop'ta gizli */
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: auto;
+      min-height: 60px;
+      padding: 8px 0;
+      padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+      justify-content: space-around;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(0,0,0,.08);
+      z-index: 9999;
+      box-shadow: 0 -4px 20px rgba(0,0,0,.08);
+      /* FIX: transform none - hiçbir zaman gizlenmiyor */
+      transform: translateY(0) !important;
+    }
+    .mb-item {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      font-size: 1.35rem; color: var(--ink); flex: 1;
+      padding: 4px 0; transition: transform .2s;
+    }
+    .mb-item:active { transform: scale(.92); }
+    .mb-item small { font-size: 0.6rem; opacity: 0.65; font-weight: 500; }
+    .mb-item.wa i { color: #25D366; }
+    .mb-item.ig i { color: #E1306C; }
+    .mb-item.call i { color: var(--teal); }
 
-  display: flex !important;
-  justify-content: space-around;
-  align-items: center;
+    /* Mobile bottom bar - sadece mobilde göster */
+    @media (max-width: 767px) {
+      .mobile-bottom-bar { display: flex; }
+      /* Hero içeriğine bottom bar kadar boşluk bırakmak gerekmez ama
+         iletişim ve footer'ın alt kısmı bar tarafından örtülmemesi için */
+      footer { padding-bottom: 80px; }
+    }
 
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(18px);
-
-  border-radius: 0; /* önemli */
-  z-index: 99999;
-
-  box-shadow: 0 -5px 30px rgba(0,0,0,0.1);
-}
-    .mb-item { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 1.3rem; color: var(--ink); flex: 1; }
-    .mb-item small { font-size: 0.62rem; opacity: 0.7; }
-    .mb-item.wa span { color: #25D366; }
-    .mb-item.ig span { color: #E1306C; }
-    .mb-item.call span { color: #2A7C8A; }
-    @media (max-width: 768px) {
-  .mobile-bottom-bar {
-    display: flex !important;
-  }
-}
-    @media (max-width: 900px) { .about-grid { grid-template-columns: 1fr; } .blog-grid { grid-template-columns: 1fr 1fr; } .contact-grid { grid-template-columns: 1fr; } .testimonials-grid { grid-template-columns: 1fr 1fr; } .process-steps { grid-template-columns: 1fr 1fr; gap: 40px; } .gallery-masonry { columns: 2; } .stats-strip { grid-template-columns: repeat(2,1fr); } }
+    /* ========= RESPONSIVE ========= */
+    @media (max-width: 900px) {
+      .about-grid { grid-template-columns: 1fr; }
+      .about-img-stack { height: 400px; }
+      .blog-grid { grid-template-columns: 1fr 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr 1fr; }
+      .process-steps { grid-template-columns: 1fr 1fr; gap: 40px; }
+      .gallery-masonry { columns: 2; }
+      .stats-strip { grid-template-columns: repeat(2,1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    }
     @media (max-width: 700px) {
-      .nav-menu { display: none; } .hamburger { display: flex; } .mobile-menu { display: flex; }
-      .section { padding: 70px 5%; } .blog-grid { grid-template-columns: 1fr; } .testimonials-grid { grid-template-columns: 1fr; }
-      .process-steps { grid-template-columns: 1fr; } .footer-grid { grid-template-columns: 1fr; } .gallery-masonry { columns: 1; }
-      .hero-btns { flex-direction: column; align-items: center; } .stats-strip { grid-template-columns: repeat(2,1fr); }
-      .services-grid { grid-template-columns: 1fr; } .about-highlights { grid-template-columns: 1fr; }
+      .nav-menu { display: none; }
+      .hamburger { display: flex; }
+      .section { padding: 70px 5%; }
+      .blog-grid { grid-template-columns: 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .process-steps { grid-template-columns: 1fr; gap: 32px; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .gallery-masonry { columns: 1; }
+      .hero-btns { flex-direction: column; align-items: center; }
+      .stats-strip { grid-template-columns: repeat(2,1fr); }
+      .services-grid { grid-template-columns: 1fr; }
+      .about-highlights { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+      .contact-form { padding: 28px 20px; }
+      .reformer-content { padding: 70px 5%; }
+    }
+    @media (max-width: 480px) {
+      .about-img-stack { height: 320px; }
+      .stat-num { font-size: 2rem; }
     }
   </style>
 </head>
 <body>
-  <nav id="navbar"><a href="#" class="nav-logo"><span class="nav-logo-name">Beyza Argın</span><span class="nav-logo-sub">Fizyoterapist</span></a>
-    <ul class="nav-menu"><li><a href="#hero">Anasayfa</a></li><li><a href="#hakkimda">Hakkımda</a></li><li><a href="#hizmetler">Hizmetler</a></li><li><a href="#blog">Blog</a></li><li><a href="#iletisim">İletişim</a></li><li><a href="tel:05435790888" class="nav-cta">📞 Randevu Al</a></li></ul>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">
+      <span class="nav-logo-name">Beyza Argın</span>
+      <span class="nav-logo-sub">Fizyoterapist</span>
+    </a>
+    <ul class="nav-menu">
+      <li><a href="#hero">Anasayfa</a></li>
+      <li><a href="#hakkimda">Hakkımda</a></li>
+      <li><a href="#hizmetler">Hizmetler</a></li>
+      <li><a href="#blog">Blog</a></li>
+      <li><a href="#iletisim">İletişim</a></li>
+      <li><a href="tel:05435790888" class="nav-cta">📞 Randevu Al</a></li>
+    </ul>
     <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
   </nav>
-  <div class="mobile-menu" id="mobileMenu"><a href="#hero">Anasayfa</a><a href="#hakkimda">Hakkımda</a><a href="#hizmetler">Hizmetler</a><a href="#blog">Blog</a><a href="#iletisim">İletişim</a><a href="tel:05435790888">0543 579 08 88</a></div>
 
-  <section id="hero"><div class="hero-video-wrap"><video autoplay muted loop playsinline><source src="/galeri/ofis.mp4" type="video/mp4" /></video></div><div class="hero-overlay"></div><div class="hero-content"><div class="hero-badge"><span class="hero-badge-dot"></span>Seferihisar • İzmir Fizyoterapi Kliniği</div><h1 class="hero-h1">İyileşme Yolculuğunuzda<br /><em>Yanınızdayız</em></h1><p class="hero-sub">İzmir Seferihisar'da profesyonel fizyoterapi hizmetleri —<br />Rehabilitasyon, Manuel Terapi & Reformer Pilates</p><div class="hero-btns"><a href="#iletisim" class="btn-primary">Randevu Al</a><a href="tel:05435790888" class="btn-outline">📞 Bize Ulaş</a></div></div><div class="hero-scroll"><span>Keşfet</span><div class="hero-scroll-line"></div></div></section>
+  <!-- FIX: Mobile menu overlay -->
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#hero" class="mobile-link">Anasayfa</a>
+    <a href="#hakkimda" class="mobile-link">Hakkımda</a>
+    <a href="#hizmetler" class="mobile-link">Hizmetler</a>
+    <a href="#blog" class="mobile-link">Blog</a>
+    <a href="#iletisim" class="mobile-link">İletişim</a>
+    <a href="tel:05435790888">📞 0543 579 08 88</a>
+  </div>
 
-  <div class="stats-strip"><div class="stat-item"><div class="stat-num" data-count="500">0</div><div class="stat-label">Memnun Hasta</div></div><div class="stat-item"><div class="stat-num" data-count="7">0</div><div class="stat-label">Yıl Deneyim</div></div><div class="stat-item"><div class="stat-num" data-count="14">0</div><div class="stat-label">Uzman Hizmet</div></div><div class="stat-item"><div class="stat-num" data-count="98">0</div><div class="stat-label">Başarı Oranı %</div></div></div>
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-video-wrap">
+      <video autoplay muted loop playsinline>
+        <source src="/galeri/ofis.mp4" type="video/mp4" />
+      </video>
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-badge"><span>Seferihisar • İzmir Fizyoterapi Kliniği</span></div>
+      <h1 class="hero-h1">İyileşme Yolculuğunuzda<br /><em>Yanınızdayız</em></h1>
+      <p class="hero-sub">İzmir Seferihisar'da profesyonel fizyoterapi hizmetleri —<br />Rehabilitasyon, Manuel Terapi &amp; Reformer Pilates</p>
+      <div class="hero-btns">
+        <a href="#iletisim" class="btn-primary">Randevu Al</a>
+        <a href="tel:05435790888" class="btn-outline">📞 Bize Ulaş</a>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <span>Keşfet</span>
+      <div class="hero-scroll-line"></div>
+    </div>
+  </section>
 
-  <section class="section" id="hakkimda"><div class="about-grid"><div class="about-img-stack"><div class="about-img-main"><img src="/galeri/fizyoterapist2.webp" alt="Beyza Argın" /></div><div class="about-img-accent"><img src="/galeri/fizyoterapist4.webp" alt="Seans" /></div><div class="about-badge"><span class="about-badge-num">7+</span><span class="about-badge-text">Yıl Deneyim</span></div></div><div class="about-text"><div><div class="section-tag">Hakkımda</div><h2 class="section-title">Fizyoterapist<br /><em>Beyza Argın</em></h2></div><p class="about-bio">Kurucu fizyoterapistimiz <strong>Beyza Argın</strong>, Doğu Akdeniz Üniversitesi mezunu olup mesleki bilgi ve deneyimini bilimsel temeller üzerine inşa etmiştir. 2023 yılından bu yana özel sağlık meslek hizmet birimini başarıyla işletmekte ve danışanlarına etik, güvenilir ve bireye özel tedavi yaklaşımları sunmaktadır. Kliniğimiz 2026 itibarıyla T.C. Sağlık Bakanlığı ruhsatlıdır. Ekibimizde fizyoterapist İrem İncesu (Dokuz Eylül Üniversitesi) yer almaktadır.</p><div class="about-highlights"><div class="highlight-item"><div class="highlight-icon">🎓</div><div><h4>Kurucu Fizyoterapist</h4><p>Beyza Argın · Doğu Akdeniz Üniversitesi</p></div></div><div class="highlight-item"><div class="highlight-icon">🏥</div><div><h4>Ruhsatlı Klinik</h4><p>T.C. Sağlık Bakanlığı · 2026</p></div></div><div class="highlight-item"><div class="highlight-icon">👩‍⚕️</div><div><h4>Fizyoterapist İrem İncesu</h4><p>Dokuz Eylül Üniversitesi Mezunu</p></div></div><div class="highlight-item"><div class="highlight-icon">📍</div><div><h4>Lokasyon</h4><p>Seferihisar, İzmir</p></div></div></div><a href="tel:05435790888" class="btn-primary" style="display:inline-block">Hemen Randevu Al →</a></div></div></section>
+  <!-- STATS -->
+  <div class="stats-strip">
+    <div class="stat-item"><div class="stat-num" data-count="500" data-suffix="+">0</div><div class="stat-label">Memnun Hasta</div></div>
+    <div class="stat-item"><div class="stat-num" data-count="7" data-suffix="+">0</div><div class="stat-label">Yıl Deneyim</div></div>
+    <div class="stat-item"><div class="stat-num" data-count="14" data-suffix="+">0</div><div class="stat-label">Uzman Hizmet</div></div>
+    <div class="stat-item"><div class="stat-num" data-count="98" data-suffix="%">0</div><div class="stat-label">Başarı Oranı</div></div>
+  </div>
 
-  <section class="section section-alt"><div class="section-header center"><div class="section-tag">Nasıl Çalışıyoruz</div><h2 class="section-title">Tedavi <em>Süreciniz</em></h2><p class="section-lead">Değerlendirmeden iyileşmeye uzanan yolda her adımda yanınızdayız.</p></div><div class="process-steps"><div class="process-step"><div class="step-num">01</div><h3>Değerlendirme</h3><p>Kapsamlı postür, hareket ve ağrı analizi ile bireysel ihtiyaçlarınızı belirleriz.</p></div><div class="process-step"><div class="step-num">02</div><h3>Planlama</h3><p>Size özel, kanıta dayalı tedavi programı oluştururuz.</p></div><div class="process-step"><div class="step-num">03</div><h3>Uygulama</h3><p>Modern teknikler ve ekipmanlarla tedavi seanslarına başlarız.</p></div><div class="process-step"><div class="step-num">04</div><h3>İzleme</h3><p>İlerlemenizi düzenli değerlendirip programı optimize ederiz.</p></div></div></section>
+  <!-- ABOUT -->
+  <section class="section" id="hakkimda">
+    <div class="about-grid">
+      <div class="about-img-stack">
+        <div class="about-img-main"><img src="/galeri/fizyoterapist2.webp" alt="Beyza Argın" /></div>
+        <div class="about-img-accent"><img src="/galeri/fizyoterapist4.webp" alt="Seans" /></div>
+        <div class="about-badge">
+          <span class="about-badge-num">7+</span>
+          <span class="about-badge-text">Yıl Deneyim</span>
+        </div>
+      </div>
+      <div class="about-text">
+        <div>
+          <div class="section-tag">Hakkımda</div>
+          <h2 class="section-title">Fizyoterapist<br /><em>Beyza Argın</em></h2>
+        </div>
+        <p class="about-bio">Kurucu fizyoterapistimiz <strong>Beyza Argın</strong>, Doğu Akdeniz Üniversitesi mezunu olup mesleki bilgi ve deneyimini bilimsel temeller üzerine inşa etmiştir. 2023 yılından bu yana özel sağlık meslek hizmet birimini başarıyla işletmekte ve danışanlarına etik, güvenilir ve bireye özel tedavi yaklaşımları sunmaktadır. Kliniğimiz 2026 itibarıyla T.C. Sağlık Bakanlığı ruhsatlıdır. Ekibimizde fizyoterapist İrem İncesu (Dokuz Eylül Üniversitesi) yer almaktadır.</p>
+        <div class="about-highlights">
+          <div class="highlight-item"><div class="highlight-icon">🎓</div><div><h4>Kurucu Fizyoterapist</h4><p>Beyza Argın · Doğu Akdeniz Üniversitesi</p></div></div>
+          <div class="highlight-item"><div class="highlight-icon">🏥</div><div><h4>Ruhsatlı Klinik</h4><p>T.C. Sağlık Bakanlığı · 2026</p></div></div>
+          <div class="highlight-item"><div class="highlight-icon">👩‍⚕️</div><div><h4>Fizyoterapist İrem İncesu</h4><p>Dokuz Eylül Üniversitesi Mezunu</p></div></div>
+          <div class="highlight-item"><div class="highlight-icon">📍</div><div><h4>Lokasyon</h4><p>Seferihisar, İzmir</p></div></div>
+        </div>
+        <a href="tel:05435790888" class="btn-primary" style="display:inline-block">Hemen Randevu Al →</a>
+      </div>
+    </div>
+  </section>
 
-  <section class="section" id="hizmetler"><div class="section-header"><div class="section-tag">Uzmanlık Alanları</div><h2 class="section-title">Sunduğumuz <em>Hizmetler</em></h2><p class="section-lead">Ortopedik rehabilitasyondan nörolojik tedaviye, her ihtiyaca özel profesyonel çözümler.</p></div><div class="services-grid" id="servicesGrid"></div></section>
+  <!-- PROCESS -->
+  <section class="section section-alt">
+    <div class="section-header center">
+      <div class="section-tag">Nasıl Çalışıyoruz</div>
+      <h2 class="section-title">Tedavi <em>Süreciniz</em></h2>
+      <p class="section-lead">Değerlendirmeden iyileşmeye uzanan yolda her adımda yanınızdayız.</p>
+    </div>
+    <div class="process-steps">
+      <div class="process-step" data-aos="fade-up" data-aos-delay="0">
+        <div class="step-num">01</div>
+        <h3>Değerlendirme</h3>
+        <p>Kapsamlı postür, hareket ve ağrı analizi ile bireysel ihtiyaçlarınızı belirleriz.</p>
+      </div>
+      <div class="process-step" data-aos="fade-up" data-aos-delay="100">
+        <div class="step-num">02</div>
+        <h3>Planlama</h3>
+        <p>Size özel, kanıta dayalı tedavi programı oluştururuz.</p>
+      </div>
+      <div class="process-step" data-aos="fade-up" data-aos-delay="200">
+        <div class="step-num">03</div>
+        <h3>Uygulama</h3>
+        <p>Modern teknikler ve ekipmanlarla tedavi seanslarına başlarız.</p>
+      </div>
+      <div class="process-step" data-aos="fade-up" data-aos-delay="300">
+        <div class="step-num">04</div>
+        <h3>İzleme</h3>
+        <p>İlerlemenizi düzenli değerlendirip programı optimize ederiz.</p>
+      </div>
+    </div>
+  </section>
 
-  <section class="reformer-section"><div class="reformer-bg"><img src="/galeri/fizyoterapist8.webp" alt="reformer" /></div><div class="reformer-overlay"></div><div class="reformer-content"><div class="reformer-tag">✦ Özel Program</div><h2>Fizyoterapist Eşliğinde<br /><em>Reformer Pilates</em></h2><p>Postürünüzü düzeltin, kaslarınızı güçlendirin ve ağrısız bir yaşama adım atın. Reformer pilates; düşük eklem yükü, yüksek kas aktivasyonu ve kişiye özel direnç ayarıyla her yaş ve seviyeye uygun en etkin fizyoterapi destekli egzersiz yöntemidir.</p><div class="reformer-features"><div class="reformer-feat">Postür bozukluklarının düzeltilmesi</div><div class="reformer-feat">Derin stabilizatör kasların güçlendirilmesi</div><div class="reformer-feat">Kronik bel ve boyun ağrısının azaltılması</div><div class="reformer-feat">Denge ve koordinasyon gelişimi</div><div class="reformer-feat">Özel ekipmanla kişiye uyarlanmış program</div></div><a href="#iletisim" class="btn-primary">Deneme Seansı Rezervasyonu</a></div></section>
+  <!-- SERVICES -->
+  <section class="section" id="hizmetler">
+    <div class="section-header">
+      <div class="section-tag">Uzmanlık Alanları</div>
+      <h2 class="section-title">Sunduğumuz <em>Hizmetler</em></h2>
+      <p class="section-lead">Ortopedik rehabilitasyondan nörolojik tedaviye, her ihtiyaca özel profesyonel çözümler.</p>
+    </div>
+    <div class="services-grid" id="servicesGrid"></div>
+  </section>
 
-  <section class="section"><div class="section-header center"><div class="section-tag">Galerimiz</div><h2 class="section-title">Kliniğimizden <em>Görüntüler</em></h2></div><div class="gallery-masonry" id="galleryMasonry"></div></section>
+  <!-- REFORMER -->
+  <section class="reformer-section">
+    <div class="reformer-bg"><img src="/galeri/fizyoterapist8.webp" alt="reformer pilates" /></div>
+    <div class="reformer-overlay"></div>
+    <div class="reformer-content">
+      <div class="reformer-tag">✦ Özel Program</div>
+      <h2>Fizyoterapist Eşliğinde<br /><em>Reformer Pilates</em></h2>
+      <p>Postürünüzü düzeltin, kaslarınızı güçlendirin ve ağrısız bir yaşama adım atın. Reformer pilates; düşük eklem yükü, yüksek kas aktivasyonu ve kişiye özel direnç ayarıyla her yaş ve seviyeye uygun en etkin fizyoterapi destekli egzersiz yöntemidir.</p>
+      <div class="reformer-features">
+        <div class="reformer-feat">Postür bozukluklarının düzeltilmesi</div>
+        <div class="reformer-feat">Derin stabilizatör kasların güçlendirilmesi</div>
+        <div class="reformer-feat">Kronik bel ve boyun ağrısının azaltılması</div>
+        <div class="reformer-feat">Denge ve koordinasyon gelişimi</div>
+        <div class="reformer-feat">Özel ekipmanla kişiye uyarlanmış program</div>
+      </div>
+      <a href="#iletisim" class="btn-primary">Deneme Seansı Rezervasyonu</a>
+    </div>
+  </section>
 
-  <section class="section section-alt"><div class="section-header center"><div class="section-tag">Hasta Yorumları</div><h2 class="section-title">Başarı <em>Hikayeleri</em></h2><p class="section-lead">Hastalarımızın gerçek deneyimleri ve iyileşme yolculukları.</p></div><div class="testimonials-grid"><div class="testimonial-card"><div class="testimonial-quote">"</div><div class="stars">★★★★★</div><p class="testimonial-text">Yıllardır çektiğim bel ağrısından Beyza hanım sayesinde kurtuldum. Beni sadece bir hasta olarak değil, bir birey olarak gördü.</p><div class="testimonial-author"><img src="https://i.pravatar.cc/44?img=1" alt="Ayşe" class="testimonial-avatar" /><div><div class="testimonial-name">Ayşe K.</div><div class="testimonial-role">Kronik Bel Ağrısı</div></div></div></div><div class="testimonial-card"><div class="testimonial-quote">"</div><div class="stars">★★★★★</div><p class="testimonial-text">Diz ameliyatı sonrası rehabilitasyon sürecimde Beyza hanımla çalıştım. Profesyonel yaklaşımı sayesinde çok hızlı iyileştim.</p><div class="testimonial-author"><img src="https://i.pravatar.cc/44?img=3" alt="Mehmet" /><div><div class="testimonial-name">Mehmet Y.</div><div class="testimonial-role">Post-op Diz Rehabilitasyonu</div></div></div></div><div class="testimonial-card"><div class="testimonial-quote">"</div><div class="stars">★★★★★</div><p class="testimonial-text">Reformer pilates seansları hayatımı değiştirdi. Postürüm düzeldi, ağrılarım geçti ve kendimi çok daha enerjik hissediyorum.</p><div class="testimonial-author"><img src="https://i.pravatar.cc/44?img=5" alt="Fatma" /><div><div class="testimonial-name">Fatma D.</div><div class="testimonial-role">Reformer Pilates</div></div></div></div></div></section>
+  <!-- GALLERY -->
+  <section class="section">
+    <div class="section-header center">
+      <div class="section-tag">Galerimiz</div>
+      <h2 class="section-title">Kliniğimizden <em>Görüntüler</em></h2>
+    </div>
+    <div class="gallery-masonry" id="galleryMasonry"></div>
+  </section>
 
-  <section class="section" id="blog"><div class="section-header"><div class="section-tag">Sağlık Köşesi</div><h2 class="section-title">Faydalı <em>Bilgiler</em></h2><p class="section-lead">Fizyoterapi, pilates ve sağlıklı yaşam hakkında uzman içerikler.</p></div><div class="blog-grid"><article class="blog-card"><div class="blog-img"><img src="/galeri/fizyoterapist1.webp" alt="fizik tedavi" /></div><div class="blog-body"><div class="blog-cat">Genel Bilgi</div><h2>Fizik Tedavi Nedir? Kimler Yararlanabilir?</h2><p>Fizik tedavi ve rehabilitasyon, kas-iskelet sistemi rahatsızlıkları, nörolojik hastalıklar ve ameliyat sonrası iyileşme süreçlerinde kanıta dayalı yöntemler kullanan bir sağlık disiplinidir.</p></div></article><article class="blog-card"><div class="blog-img"><img src="/galeri/fizyoterapist8.webp" alt="reformer" /></div><div class="blog-body"><div class="blog-cat">Reformer Pilates</div><h2>Reformer Pilatesin Sağlığa 8 Kanıtlanmış Faydası</h2><p>Reformer pilates, geleneksel mat pilatesinden farklı olarak yay direnci sistemiyle çalışır. Kronik bel ve boyun ağrısını azaltır; postürü iyileştirir.</p></div></article><article class="blog-card"><div class="blog-img"><img src="/galeri/fizyoterapist5.webp" alt="ağrı" /></div><div class="blog-body"><div class="blog-cat">Ağrı Yönetimi</div><h2>Bel ve Boyun Ağrısı Nasıl Geçer? Uzman Önerileri</h2><p>Fizyoterapi kapsamında uygulanan manuel terapi, kuru iğneleme, derin ısıtma ve kişiye özel egzersizler hem ağrıyı giderir hem de nüks riskini azaltır.</p></div></article></div></section>
+  <!-- TESTIMONIALS -->
+  <section class="section section-alt">
+    <div class="section-header center">
+      <div class="section-tag">Hasta Yorumları</div>
+      <h2 class="section-title">Başarı <em>Hikayeleri</em></h2>
+      <p class="section-lead">Hastalarımızın gerçek deneyimleri ve iyileşme yolculukları.</p>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card" data-aos="fade-up">
+        <div class="testimonial-quote">"</div>
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">Yıllardır çektiğim bel ağrısından Beyza hanım sayesinde kurtuldum. Beni sadece bir hasta olarak değil, bir birey olarak gördü.</p>
+        <div class="testimonial-author">
+          <img src="https://i.pravatar.cc/44?img=1" alt="Ayşe" class="testimonial-avatar" />
+          <div><div class="testimonial-name">Ayşe K.</div><div class="testimonial-role">Kronik Bel Ağrısı</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="testimonial-quote">"</div>
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">Diz ameliyatı sonrası rehabilitasyon sürecimde Beyza hanımla çalıştım. Profesyonel yaklaşımı sayesinde çok hızlı iyileştim.</p>
+        <div class="testimonial-author">
+          <img src="https://i.pravatar.cc/44?img=3" alt="Mehmet" class="testimonial-avatar" />
+          <div><div class="testimonial-name">Mehmet Y.</div><div class="testimonial-role">Post-op Diz Rehabilitasyonu</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="testimonial-quote">"</div>
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">Reformer pilates seansları hayatımı değiştirdi. Postürüm düzeldi, ağrılarım geçti ve kendimi çok daha enerjik hissediyorum.</p>
+        <div class="testimonial-author">
+          <img src="https://i.pravatar.cc/44?img=5" alt="Fatma" class="testimonial-avatar" />
+          <div><div class="testimonial-name">Fatma D.</div><div class="testimonial-role">Reformer Pilates</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <section class="section section-alt" id="iletisim"><div class="section-header"><div class="section-tag">Bize Ulaşın</div><h2 class="section-title">Randevu & <em>İletişim</em></h2><p class="section-lead">İzmir Seferihisar'daki kliniğimizden size ulaşalım veya siz bize gelin.</p></div><div class="contact-grid"><div class="contact-info"><div class="contact-info-item"><div class="contact-icon">📍</div><div><h4>Adres</h4><p>Hıdırılık Mahallesi 65 Sokak No:11 Daire 2 Seferihisar / İzmir</p></div></div><div class="contact-info-item"><div class="contact-icon">📞</div><div><h4>Telefon</h4><a href="tel:05435790888" style="font-weight:600">0543 579 08 88</a></div></div><div class="contact-info-item"><div class="contact-icon">🕐</div><div><h4>Çalışma Saatleri</h4><p>Pazartesi – Cuma: 09:00 – 19:00<br />Cumartesi: 09:00 – 14:00</p></div></div><div class="map-embed"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3135.6610227409783!2d26.835329575835765!3d38.1945473718827!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14bbf3be2b9a8417%3A0x107da32529ed87f7!2sBianco%20Fizyoterapi%20Beyza%20ARGIN!5e0!3m2!1str!2str!4v1774555571349!5m2!1str!2str" width="100%" height="280" style="border:0;" allowfullscreen loading="lazy"></iframe></div></div><div class="contact-form"><h3 style="font-family:'Cormorant Garamond';font-size:1.6rem;">Randevu Talebi</h3><p style="margin-bottom:20px;">Formu doldurun, 24 saat içinde dönüş yapalım.</p><div class="form-row"><div class="form-group"><label>Ad Soyad</label><input type="text" id="name" placeholder="Adınız Soyadınız" /></div><div class="form-group"><label>Telefon</label><input type="tel" id="phone" placeholder="0 5__ ___ __ __" /></div></div><div class="form-group"><label>Hizmet</label><select id="service"><option>Ortopedik Rehabilitasyon</option><option>Manuel Terapi</option><option>Reformer Pilates</option><option>Sporcu Rehabilitasyonu</option><option>Elektroterapi</option><option>Egzersiz Terapisi</option></select></div><div class="form-group"><label>Mesajınız</label><textarea id="message" rows="3" placeholder="Şikayetinizi ve randevu talebinizi belirtin..."></textarea></div><button class="btn-submit" id="submitBtn">Randevu Talebini Gönder 📤</button><div id="formSuccess" style="display:none;margin-top:16px;background:var(--sage-pale);padding:12px;border-radius:8px;">✅ Mesajınız alındı! En kısa sürede sizi arayacağız.</div></div></div></section>
+  <!-- BLOG -->
+  <section class="section" id="blog">
+    <div class="section-header">
+      <div class="section-tag">Sağlık Köşesi</div>
+      <h2 class="section-title">Faydalı <em>Bilgiler</em></h2>
+      <p class="section-lead">Fizyoterapi, pilates ve sağlıklı yaşam hakkında uzman içerikler.</p>
+    </div>
+    <div class="blog-grid">
+      <article class="blog-card" data-aos="fade-up">
+        <div class="blog-img"><img src="/galeri/fizyoterapist1.webp" alt="fizik tedavi" /></div>
+        <div class="blog-body">
+          <div class="blog-cat">Genel Bilgi</div>
+          <h2>Fizik Tedavi Nedir? Kimler Yararlanabilir?</h2>
+          <p>Fizik tedavi ve rehabilitasyon, kas-iskelet sistemi rahatsızlıkları, nörolojik hastalıklar ve ameliyat sonrası iyileşme süreçlerinde kanıta dayalı yöntemler kullanan bir sağlık disiplinidir.</p>
+        </div>
+      </article>
+      <article class="blog-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="blog-img"><img src="/galeri/fizyoterapist8.webp" alt="reformer" /></div>
+        <div class="blog-body">
+          <div class="blog-cat">Reformer Pilates</div>
+          <h2>Reformer Pilatesin Sağlığa 8 Kanıtlanmış Faydası</h2>
+          <p>Reformer pilates, geleneksel mat pilatesinden farklı olarak yay direnci sistemiyle çalışır. Kronik bel ve boyun ağrısını azaltır; postürü iyileştirir.</p>
+        </div>
+      </article>
+      <article class="blog-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="blog-img"><img src="/galeri/fizyoterapist5.webp" alt="ağrı" /></div>
+        <div class="blog-body">
+          <div class="blog-cat">Ağrı Yönetimi</div>
+          <h2>Bel ve Boyun Ağrısı Nasıl Geçer? Uzman Önerileri</h2>
+          <p>Fizyoterapi kapsamında uygulanan manuel terapi, kuru iğneleme, derin ısıtma ve kişiye özel egzersizler hem ağrıyı giderir hem de nüks riskini azaltır.</p>
+        </div>
+      </article>
+    </div>
+  </section>
 
-  <footer><div class="footer-grid"><div class="footer-brand"><span class="footer-logo-name">Beyza Argın</span><span class="footer-logo-sub">Fizyoterapist</span><p>İzmir Seferihisar'da profesyonel fizyoterapi hizmetleri. Rehabilitasyon, Manuel Terapi ve Reformer Pilates.</p><div class="footer-social"><a href="https://www.instagram.com/bianco_fizyoterapi" class="social-btn">📸</a><a href="https://wa.me/905435790888" class="social-btn">💬</a><a href="mailto:arginbeyza@gmail.com" class="social-btn">✉️</a></div></div><div class="footer-col"><h4>Hizmetler</h4><ul><li><a href="#hizmetler">Ortopedik Rehabilitasyon</a></li><li><a href="#hizmetler">Manuel Terapi</a></li><li><a href="#hizmetler">Reformer Pilates</a></li><li><a href="#hizmetler">Sporcu Rehabilitasyonu</a></li></ul></div><div class="footer-col"><h4>Hızlı Bağlantılar</h4><ul><li><a href="#hero">Anasayfa</a></li><li><a href="#hakkimda">Hakkımda</a></li><li><a href="#hizmetler">Hizmetler</a></li><li><a href="#blog">Blog</a></li><li><a href="#iletisim">İletişim</a></li></ul></div><div class="footer-col"><h4>İletişim</h4><ul><li><a href="tel:05435790888">📞 0543 579 08 88</a></li><li><a href="mailto:arginbeyza@gmail.com">✉️ arginbeyza@gmail.com</a></li><li><a href="#">📍 Seferihisar / İzmir</a></li></ul></div></div><div class="footer-bottom"><span>© 2025 Fizyoterapist Beyza Argın. Tüm hakları saklıdır.</span><span>İzmir Seferihisar Fizyoterapi Kliniği</span></div></footer>
+  <!-- CONTACT -->
+  <section class="section section-alt" id="iletisim">
+    <div class="section-header">
+      <div class="section-tag">Bize Ulaşın</div>
+      <h2 class="section-title">Randevu &amp; <em>İletişim</em></h2>
+      <p class="section-lead">İzmir Seferihisar'daki kliniğimizden size ulaşalım veya siz bize gelin.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="contact-info-item">
+          <div class="contact-icon">📍</div>
+          <div><h4>Adres</h4><p>Hıdırılık Mahallesi 65 Sokak No:11 Daire 2 Seferihisar / İzmir</p></div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-icon">📞</div>
+          <div><h4>Telefon</h4><a href="tel:05435790888" style="font-weight:600;color:var(--teal)">0543 579 08 88</a></div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-icon">🕐</div>
+          <div><h4>Çalışma Saatleri</h4><p>Pazartesi – Cuma: 09:00 – 19:00<br />Cumartesi: 09:00 – 14:00</p></div>
+        </div>
+        <div class="map-embed">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3135.6610227409783!2d26.835329575835765!3d38.1945473718827!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14bbf3be2b9a8417%3A0x107da32529ed87f7!2sBianco%20Fizyoterapi%20Beyza%20ARGIN!5e0!3m2!1str!2str!4v1774555571349!5m2!1str!2str" width="100%" height="280" style="border:0;" allowfullscreen loading="lazy" title="Klinik Haritası"></iframe>
+        </div>
+      </div>
+      <div class="contact-form">
+        <h3 style="font-family:'Cormorant Garamond';font-size:1.6rem;margin-bottom:8px;">Randevu Talebi</h3>
+        <p style="margin-bottom:20px;color:var(--ink-soft);font-size:.9rem;">Formu doldurun, 24 saat içinde dönüş yapalım.</p>
+        <div class="form-row">
+          <div class="form-group"><label>Ad Soyad</label><input type="text" id="name" placeholder="Adınız Soyadınız" /></div>
+          <div class="form-group"><label>Telefon</label><input type="tel" id="phone" placeholder="0 5__ ___ __ __" /></div>
+        </div>
+        <div class="form-group">
+          <label>Hizmet</label>
+          <select id="service">
+            <option>Ortopedik Rehabilitasyon</option>
+            <option>Manuel Terapi</option>
+            <option>Reformer Pilates</option>
+            <option>Sporcu Rehabilitasyonu</option>
+            <option>Elektroterapi</option>
+            <option>Egzersiz Terapisi</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Mesajınız</label>
+          <textarea id="message" rows="3" placeholder="Şikayetinizi ve randevu talebinizi belirtin..."></textarea>
+        </div>
+        <button class="btn-submit" id="submitBtn">Randevu Talebini Gönder 📤</button>
+        <div id="formSuccess" style="display:none;margin-top:16px;background:var(--sage-pale);padding:14px 16px;border-radius:8px;border-left:3px solid var(--sage);">
+          ✅ Mesajınız alındı! En kısa sürede sizi arayacağız.
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <div class="mobile-bottom-bar"><a href="https://wa.me/905435790888" class="mb-item wa"><span><i class="fab fa-whatsapp"></i></span><small>WhatsApp</small></a><a href="https://instagram.com/beyzaargin" class="mb-item ig"><span><i class="fab fa-instagram"></i></span><small>Instagram</small></a><a href="tel:05435790888" class="mb-item call"><span><i class="fas fa-phone"></i></span><small>Hemen Ara</small></a></div>
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="footer-logo-name">Beyza Argın</span>
+        <span class="footer-logo-sub">Fizyoterapist</span>
+        <p>İzmir Seferihisar'da profesyonel fizyoterapi hizmetleri. Rehabilitasyon, Manuel Terapi ve Reformer Pilates.</p>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/bianco_fizyoterapi" class="social-btn" aria-label="Instagram">📸</a>
+          <a href="https://wa.me/905435790888" class="social-btn" aria-label="WhatsApp">💬</a>
+          <a href="mailto:arginbeyza@gmail.com" class="social-btn" aria-label="E-posta">✉️</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Hizmetler</h4>
+        <ul>
+          <li><a href="#hizmetler">Ortopedik Rehabilitasyon</a></li>
+          <li><a href="#hizmetler">Manuel Terapi</a></li>
+          <li><a href="#hizmetler">Reformer Pilates</a></li>
+          <li><a href="#hizmetler">Sporcu Rehabilitasyonu</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Hızlı Bağlantılar</h4>
+        <ul>
+          <li><a href="#hero">Anasayfa</a></li>
+          <li><a href="#hakkimda">Hakkımda</a></li>
+          <li><a href="#hizmetler">Hizmetler</a></li>
+          <li><a href="#blog">Blog</a></li>
+          <li><a href="#iletisim">İletişim</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>İletişim</h4>
+        <ul>
+          <li><a href="tel:05435790888">📞 0543 579 08 88</a></li>
+          <li><a href="mailto:arginbeyza@gmail.com">✉️ arginbeyza@gmail.com</a></li>
+          <li><a href="#iletisim">📍 Seferihisar / İzmir</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Fizyoterapist Beyza Argın. Tüm hakları saklıdır.</span>
+      <span>İzmir Seferihisar Fizyoterapi Kliniği</span>
+    </div>
+  </footer>
+
+  <!-- MOBILE BOTTOM BAR — FIX: Her zaman görünür, JS hide/show kaldırıldı -->
+  <div class="mobile-bottom-bar">
+    <a href="https://wa.me/905435790888" class="mb-item wa">
+      <i class="fab fa-whatsapp"></i>
+      <small>WhatsApp</small>
+    </a>
+    <a href="https://www.instagram.com/bianco_fizyoterapi" class="mb-item ig">
+      <i class="fab fa-instagram"></i>
+      <small>Instagram</small>
+    </a>
+    <a href="tel:05435790888" class="mb-item call">
+      <i class="fas fa-phone"></i>
+      <small>Hemen Ara</small>
+    </a>
+  </div>
 
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
-    AOS.init({ duration: 700, once: true });
+    // ========= AOS =========
+    AOS.init({ duration: 700, once: true, offset: 80 });
+
+    // ========= NAVBAR SCROLL =========
     const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', window.scrollY > 40), { passive: true });
-    const hamburger = document.getElementById('hamburger'), mobileMenu = document.getElementById('mobileMenu');
-    hamburger.addEventListener('click', () => { hamburger.classList.toggle('open'); mobileMenu.classList.toggle('open'); document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : ''; });
-    document.querySelectorAll('.mobile-menu a, .mobile-link').forEach(link => link.addEventListener('click', () => { hamburger.classList.remove('open'); mobileMenu.classList.remove('open'); document.body.style.overflow = ''; }));
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => anchor.addEventListener('click', e => { const target = document.querySelector(anchor.getAttribute('href')); if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }));
-    const counters = document.querySelectorAll('[data-count]'); const obs = new IntersectionObserver(entries => { entries.forEach(entry => { if (entry.isIntersecting) { const el = entry.target; const target = +el.dataset.count; let curr = 0; const step = target / 50; const timer = setInterval(() => { curr = Math.min(curr + step, target); el.textContent = Math.floor(curr) + (target >= 100 ? '%' : target >= 50 ? '+' : ''); if (curr >= target) { el.textContent = target + (target >= 100 ? '%' : target >= 50 ? '+' : '+'); clearInterval(timer); } }, 25); obs.unobserve(el); } }); }, { threshold: 0.5 }); counters.forEach(c => obs.observe(c));
-    document.getElementById('submitBtn').addEventListener('click', () => { const name = document.getElementById('name').value.trim(); const phone = document.getElementById('phone').value.trim(); if (!name || !phone) { alert('Lütfen ad soyad ve telefon alanlarını doldurun.'); return; } document.getElementById('formSuccess').style.display = 'block'; document.getElementById('submitBtn').disabled = true; document.getElementById('submitBtn').textContent = '✅ Gönderildi'; });
-    const serviceData = [{img:"/galeri/fizyoterapist1.webp",icon:"🦴",title:"Ortopedik Rehabilitasyon",desc:"Kırık, çıkık, ameliyat sonrası iyileşme ve kas-iskelet sistemi bozukluklarında kapsamlı tedavi programları.",backDesc:"Kapsamlı değerlendirme ve kişiye özel egzersiz programları ile hızlı iyileşme süreci."},{img:"/galeri/fizyoterapist3.webp",icon:"🧠",title:"Nörolojik Rehabilitasyon",desc:"İnme, Parkinson, MS ve diğer nörolojik durumlar için özel egzersiz ve yeniden öğrenme teknikleri.",backDesc:"Nörolojik hastalıklarda fonksiyonel iyileşme, denge ve koordinasyon gelişimi."},{img:"/galeri/fizyoterapist5.webp",icon:"🏃",title:"Sporcu Rehabilitasyonu",desc:"Spor yaralanmalarının tedavisi, performans artırma ve sakatlık önleme programları.",backDesc:"Spor yaralanmalarında hızlı ve güvenli dönüş için özel rehabilitasyon programları."},{img:"/galeri/fizyoterapist7.webp",icon:"🙌",title:"Manuel Terapi",desc:"Eklem mobilizasyonu, yumuşak doku teknikleri ve manipülasyon ile ağrı ve hareket kısıtlılığının giderilmesi.",backDesc:"Özel manuel tekniklerle ağrıyı azaltma, eklem hareket açıklığını artırma."},{img:"/galeri/fizyoterapist9.webp",icon:"⚡",title:"Elektroterapi Uygulamaları",desc:"TENS, ultrason, lazer terapi ve diğer elektrofiziksel ajanlarla ağrı yönetimi ve doku iyileşmesi.",backDesc:"Modern elektroterapi cihazları ile ağrı kontrolü, ödem azaltma ve doku iyileşmesini hızlandırma."},{img:"/galeri/fizyoterapist6.webp",icon:"💪",title:"Egzersiz Terapisi",desc:"Fonksiyonel hareket analizi ve kişiye özel egzersiz reçetesiyle kas gücü ve esnekliği artırma.",backDesc:"Kişiye özel egzersiz programları ile güçlendirme, esneklik kazandırma ve fonksiyonel kapasite artırma."}];
-    const servicesGrid = document.getElementById('servicesGrid'); if(servicesGrid){ serviceData.forEach(s=>{ const card=document.createElement('div'); card.className='flip-card'; card.innerHTML=`<div class="flip-card-inner"><div class="flip-front"><div class="service-img"><img src="${s.img}" loading="lazy" /><div class="service-icon-float">${s.icon}</div></div><div class="service-body"><h3>${s.title}</h3><p>${s.desc}</p></div></div><div class="flip-back"><h3>${s.title}</h3><p>${s.backDesc}</p><div class="flip-buttons"><a href="tel:05435790888" class="flip-btn-call">📞 Hemen Ara</a><a href="https://wa.me/905435790888?text=Merhaba%20${encodeURIComponent(s.title)}%20hakkında%20bilgi%20almak%20istiyorum." class="flip-btn-wa">💬 WhatsApp</a></div></div></div>`; servicesGrid.appendChild(card); }); }
-    const galleryArr = ["/galeri/fizyoterapist1.webp","/galeri/fizyoterapist2.webp","/galeri/fizyoterapist3.webp","/galeri/fizyoterapist4.webp","/galeri/fizyoterapist5.webp","/galeri/fizyoterapist6.webp","/galeri/fizyoterapist7.webp","/galeri/fizyoterapist8.webp","/galeri/fizyoterapist9.webp","/galeri/fizyoterapist10.webp"]; const galleryDiv=document.getElementById('galleryMasonry'); if(galleryDiv){ galleryArr.forEach(src=>{ const item=document.createElement('div'); item.className='gallery-item'; item.innerHTML=`<img src="${src}" loading="lazy" alt="galeri" /><div class="gallery-item-overlay"><span class="gallery-item-label">Kliniğimiz</span></div>`; galleryDiv.appendChild(item); }); }
-    document.querySelectorAll('.flip-card').forEach(card => { card.addEventListener('click', (e) => { if (e.target.closest('.flip-btn-call') || e.target.closest('.flip-btn-wa')) return; card.classList.toggle('flipped'); }); });
-    let lastScroll = 0; const bottomBar = document.querySelector('.mobile-bottom-bar'); if(bottomBar){ window.addEventListener('scroll', () => { if(window.innerWidth<=768){ if(window.scrollY > lastScroll && window.scrollY>100) bottomBar.style.transform='translateY(100%)'; else bottomBar.style.transform='translateY(0)'; lastScroll=window.scrollY; } }, {passive:true}); }
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    // ========= HAMBURGER / MOBILE MENU =========
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileOverlay = document.getElementById('mobileOverlay');
+
+    function openMenu() {
+      hamburger.classList.add('open');
+      mobileMenu.classList.add('open');
+      mobileOverlay.style.display = 'block';
+      setTimeout(() => mobileOverlay.classList.add('open'), 10);
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMenu() {
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      mobileOverlay.classList.remove('open');
+      setTimeout(() => { mobileOverlay.style.display = 'none'; }, 350);
+      document.body.style.overflow = '';
+    }
+
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.contains('open') ? closeMenu() : openMenu();
+    });
+    mobileOverlay.addEventListener('click', closeMenu);
+    document.querySelectorAll('.mobile-link').forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    // ========= SMOOTH SCROLL =========
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', e => {
+        const target = document.querySelector(anchor.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // ========= COUNTER ANIMATION — FIX: data-suffix kullanımı =========
+    const counters = document.querySelectorAll('[data-count]');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const target = +el.dataset.count;
+          const suffix = el.dataset.suffix || '';
+          let curr = 0;
+          const step = target / 60;
+          const timer = setInterval(() => {
+            curr = Math.min(curr + step, target);
+            el.textContent = Math.floor(curr) + suffix;
+            if (curr >= target) {
+              el.textContent = target + suffix;
+              clearInterval(timer);
+            }
+          }, 20);
+          obs.unobserve(el);
+        }
+      });
+    }, { threshold: 0.5 });
+    counters.forEach(c => obs.observe(c));
+
+    // ========= SERVICES GRID =========
+    const serviceData = [
+      { img:"/galeri/fizyoterapist1.webp", icon:"🦴", title:"Ortopedik Rehabilitasyon", desc:"Kırık, çıkık, ameliyat sonrası iyileşme ve kas-iskelet sistemi bozukluklarında kapsamlı tedavi programları.", backDesc:"Kapsamlı değerlendirme ve kişiye özel egzersiz programları ile hızlı iyileşme süreci." },
+      { img:"/galeri/fizyoterapist3.webp", icon:"🧠", title:"Nörolojik Rehabilitasyon", desc:"İnme, Parkinson, MS ve diğer nörolojik durumlar için özel egzersiz ve yeniden öğrenme teknikleri.", backDesc:"Nörolojik hastalıklarda fonksiyonel iyileşme, denge ve koordinasyon gelişimi." },
+      { img:"/galeri/fizyoterapist5.webp", icon:"🏃", title:"Sporcu Rehabilitasyonu", desc:"Spor yaralanmalarının tedavisi, performans artırma ve sakatlık önleme programları.", backDesc:"Spor yaralanmalarında hızlı ve güvenli dönüş için özel rehabilitasyon programları." },
+      { img:"/galeri/fizyoterapist7.webp", icon:"🙌", title:"Manuel Terapi", desc:"Eklem mobilizasyonu, yumuşak doku teknikleri ve manipülasyon ile ağrı ve hareket kısıtlılığının giderilmesi.", backDesc:"Özel manuel tekniklerle ağrıyı azaltma, eklem hareket açıklığını artırma." },
+      { img:"/galeri/fizyoterapist9.webp", icon:"⚡", title:"Elektroterapi Uygulamaları", desc:"TENS, ultrason, lazer terapi ve diğer elektrofiziksel ajanlarla ağrı yönetimi ve doku iyileşmesi.", backDesc:"Modern elektroterapi cihazları ile ağrı kontrolü, ödem azaltma ve doku iyileşmesini hızlandırma." },
+      { img:"/galeri/fizyoterapist6.webp", icon:"💪", title:"Egzersiz Terapisi", desc:"Fonksiyonel hareket analizi ve kişiye özel egzersiz reçetesiyle kas gücü ve esnekliği artırma.", backDesc:"Kişiye özel egzersiz programları ile güçlendirme, esneklik kazandırma ve fonksiyonel kapasite artırma." }
+    ];
+
+    const servicesGrid = document.getElementById('servicesGrid');
+    if (servicesGrid) {
+      serviceData.forEach(s => {
+        const card = document.createElement('div');
+        card.className = 'flip-card';
+        card.innerHTML = `
+          <div class="flip-card-inner">
+            <div class="flip-front">
+              <div class="service-img">
+                <img src="${s.img}" loading="lazy" alt="${s.title}" />
+                <div class="service-icon-float">${s.icon}</div>
+              </div>
+              <div class="service-body">
+                <h3>${s.title}</h3>
+                <p>${s.desc}</p>
+              </div>
+            </div>
+            <div class="flip-back">
+              <h3>${s.title}</h3>
+              <p>${s.backDesc}</p>
+              <div class="flip-buttons">
+                <a href="tel:05435790888" class="flip-btn-call">📞 Hemen Ara</a>
+                <a href="https://wa.me/905435790888?text=Merhaba%20${encodeURIComponent(s.title)}%20hakkında%20bilgi%20almak%20istiyorum." class="flip-btn-wa" target="_blank" rel="noopener">💬 WhatsApp</a>
+              </div>
+            </div>
+          </div>`;
+        servicesGrid.appendChild(card);
+      });
+
+      // FIX: Flip click — link tıklamalarında flip engellendi
+      servicesGrid.addEventListener('click', e => {
+        const card = e.target.closest('.flip-card');
+        if (!card) return;
+        if (e.target.closest('.flip-btn-call') || e.target.closest('.flip-btn-wa')) return;
+        card.classList.toggle('flipped');
+      });
+    }
+
+    // ========= GALLERY =========
+    const galleryArr = [
+      "/galeri/fizyoterapist1.webp","/galeri/fizyoterapist2.webp","/galeri/fizyoterapist3.webp",
+      "/galeri/fizyoterapist4.webp","/galeri/fizyoterapist5.webp","/galeri/fizyoterapist6.webp",
+      "/galeri/fizyoterapist7.webp","/galeri/fizyoterapist8.webp","/galeri/fizyoterapist9.webp",
+      "/galeri/fizyoterapist10.webp"
+    ];
+    const galleryDiv = document.getElementById('galleryMasonry');
+    if (galleryDiv) {
+      galleryArr.forEach(src => {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.innerHTML = `<img src="${src}" loading="lazy" alt="Klinik Galerisi" /><div class="gallery-item-overlay"><span class="gallery-item-label">Kliniğimiz</span></div>`;
+        galleryDiv.appendChild(item);
+      });
+    }
+
+    // ========= CONTACT FORM =========
+    document.getElementById('submitBtn').addEventListener('click', () => {
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      if (!name || !phone) {
+        alert('Lütfen ad soyad ve telefon alanlarını doldurun.');
+        return;
+      }
+      document.getElementById('formSuccess').style.display = 'block';
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = '✅ Gönderildi';
+    });
+
+    // ========= MOBILE BOTTOM BAR — FIX =========
+    // Scroll'a bağlı hide/show kodu TAMAMEN KALDIRILDI.
+    // Bar her zaman görünür (CSS ile kontrol ediliyor).
+
   </script>
-  <style>.contact-icon { width: 48px; height: 48px; background: var(--teal-pale); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; } .contact-info-item { display: flex; gap: 16px; margin-bottom: 24px; } .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; } .stars { color: var(--gold); margin-bottom: 12px; } .testimonial-quote { font-family: 'Cormorant Garamond'; font-size: 3rem; color: var(--teal-pale); position: absolute; top: 10px; left: 20px; } .testimonial-author { display: flex; align-items: center; gap: 12px; margin-top: 16px; } .testimonial-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; } .footer-social { display: flex; gap: 10px; margin-top: 20px; } .social-btn { width: 38px; height: 38px; background: rgba(255,255,255,.07); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: .3s; } .footer-col ul { list-style: none; } .footer-col ul li a { font-size: .84rem; color: rgba(255,255,255,.55); } .footer-bottom { border-top: 1px solid rgba(255,255,255,.08); padding-top: 24px; display: flex; justify-content: space-between; flex-wrap: wrap; } .map-embed { border-radius: var(--radius); overflow: hidden; margin-top: 20px; } @media (max-width:700px){ .form-row { grid-template-columns: 1fr; } .footer-bottom { flex-direction: column; gap: 10px; } .gallery-item-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(42,124,138,.6), transparent); opacity: 0; transition: opacity .4s; display: flex; align-items: flex-end; padding: 20px; } .gallery-item:hover .gallery-item-overlay { opacity: 1; } .gallery-item-overlay span { color: white; } }</style>
 </body>
 </html>

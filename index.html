@@ -867,32 +867,46 @@
           <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3135.6610227409783!2d26.835329575835765!3d38.1945473718827!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14bbf3be2b9a8417%3A0x107da32529ed87f7!2sBianco%20Fizyoterapi%20Beyza%20ARGIN!5e0!3m2!1str!2str!4v1774555571349!5m2!1str!2str" width="100%" height="280" style="border:0;" allowfullscreen loading="lazy" title="Klinik Haritası"></iframe>
         </div>
       </div>
-      <div class="contact-form">
-        <h3 style="font-family:'Cormorant Garamond';font-size:1.6rem;margin-bottom:8px;">Randevu Talebi</h3>
-        <p style="margin-bottom:20px;color:var(--ink-soft);font-size:.9rem;">Formu doldurun, 24 saat içinde dönüş yapalım.</p>
-        <div class="form-row">
-          <div class="form-group"><label>Ad Soyad</label><input type="text" id="name" placeholder="Adınız Soyadınız" /></div>
-          <div class="form-group"><label>Telefon</label><input type="tel" id="phone" placeholder="0 5__ ___ __ __" /></div>
-        </div>
-        <div class="form-group">
-          <label>Hizmet</label>
-          <select id="service">
-            <option>Ortopedik Rehabilitasyon</option>
-            <option>Manuel Terapi</option>
-            <option>Reformer Pilates</option>
-            <option>Sporcu Rehabilitasyonu</option>
-            <option>Elektroterapi</option>
-            <option>Egzersiz Terapisi</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Mesajınız</label>
-          <textarea id="message" rows="3" placeholder="Şikayetinizi ve randevu talebinizi belirtin..."></textarea>
-        </div>
-        <button class="btn-submit" id="submitBtn">Randevu Talebini Gönder 📤</button>
-        <div id="formSuccess" style="display:none;margin-top:16px;background:var(--sage-pale);padding:14px 16px;border-radius:8px;border-left:3px solid var(--sage);">
-          ✅ Mesajınız alındı! En kısa sürede sizi arayacağız.
-        </div>
+     <div class="contact-form">
+  <h3 style="font-family:'Cormorant Garamond';font-size:1.6rem;margin-bottom:8px;">Randevu Talebi</h3>
+  <p style="margin-bottom:20px;color:var(--ink-soft);font-size:.9rem;">Formu doldurun, WhatsApp'tan size dönüş yapalım.</p>
+  
+  <div class="form-row">
+    <div class="form-group">
+      <label>Ad Soyad</label>
+      <input type="text" id="name" placeholder="Adınız Soyadınız" />
+    </div>
+    <div class="form-group">
+      <label>Telefon</label>
+      <input type="tel" id="phone" placeholder="0 5__ ___ __ __" />
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <label>Hizmet</label>
+    <select id="service">
+      <option value="Ortopedik Rehabilitasyon">Ortopedik Rehabilitasyon</option>
+      <option value="Manuel Terapi">Manuel Terapi</option>
+      <option value="Reformer Pilates">Reformer Pilates</option>
+      <option value="Sporcu Rehabilitasyonu">Sporcu Rehabilitasyonu</option>
+      <option value="Elektroterapi">Elektroterapi</option>
+      <option value="Egzersiz Terapisi">Egzersiz Terapisi</option>
+    </select>
+  </div>
+  
+  <div class="form-group">
+    <label>Tarih Tercihiniz (Opsiyonel)</label>
+    <input type="text" id="date" placeholder="Örn: 10 Nisan 2026, hafta içi, akşam..." />
+  </div>
+  
+  <div class="form-group">
+    <label>Mesajınız / Şikayetiniz</label>
+    <textarea id="message" rows="3" placeholder="Şikayetinizi ve randevu talebinizi belirtin..."></textarea>
+  </div>
+  
+  <button class="btn-submit" id="submitBtn">📱 WhatsApp ile Randevu Talebi Gönder</button>
+  <div id="formSuccess" style="display:none;margin-top:16px;background:var(--sage-pale);padding:14px 16px;border-radius:8px;border-left:3px solid var(--sage);"></div>
+</div>
       </div>
     </div>
   </section>
@@ -1099,23 +1113,88 @@
       });
     }
 
-    // ========= CONTACT FORM =========
-    document.getElementById('submitBtn').addEventListener('click', () => {
-      const name = document.getElementById('name').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      if (!name || !phone) {
-        alert('Lütfen ad soyad ve telefon alanlarını doldurun.');
-        return;
-      }
-      document.getElementById('formSuccess').style.display = 'block';
-      const btn = document.getElementById('submitBtn');
-      btn.disabled = true;
-      btn.textContent = '✅ Gönderildi';
-    });
-
-    // ========= MOBILE BOTTOM BAR — FIX =========
-    // Scroll'a bağlı hide/show kodu TAMAMEN KALDIRILDI.
-    // Bar her zaman görünür (CSS ile kontrol ediliyor).
+   // ========= CONTACT FORM - WHATSAPP INTEGRATION =========
+document.getElementById('submitBtn').addEventListener('click', function(e) {
+  e.preventDefault();
+  
+  // Form verilerini al
+  const name = document.getElementById('name').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const service = document.getElementById('service').value;
+  const date = document.getElementById('date') ? document.getElementById('date').value.trim() : '';
+  const message = document.getElementById('message').value.trim();
+  
+  // Validasyon
+  if (!name) {
+    alert('Lütfen adınızı ve soyadınızı girin.');
+    document.getElementById('name').focus();
+    return;
+  }
+  
+  if (!phone) {
+    alert('Lütfen telefon numaranızı girin.');
+    document.getElementById('phone').focus();
+    return;
+  }
+  
+  // Telefon numarası formatını kontrol et (isteğe bağlı basit kontrol)
+  const phoneRegex = /^[0-9\s\(\)\+\-]{10,15}$/;
+  if (!phoneRegex.test(phone)) {
+    alert('Lütfen geçerli bir telefon numarası girin.');
+    return;
+  }
+  
+  // WhatsApp mesajını oluştur
+  let whatsappMessage = `🏥 *YENİ RANDEVU TALEBİ*%0a%0a`;
+  whatsappMessage += `👤 *Ad Soyad:* ${encodeURIComponent(name)}%0a`;
+  whatsappMessage += `📞 *Telefon:* ${encodeURIComponent(phone)}%0a`;
+  whatsappMessage += `🩺 *Hizmet:* ${encodeURIComponent(service)}%0a`;
+  
+  if (date) {
+    whatsappMessage += `📅 *Tarih Tercihi:* ${encodeURIComponent(date)}%0a`;
+  }
+  
+  if (message) {
+    whatsappMessage += `%0a💬 *Mesaj:*%0a${encodeURIComponent(message)}%0a`;
+  }
+  
+  whatsappMessage += `%0a⏰ *Talep Tarihi:* ${encodeURIComponent(new Date().toLocaleString('tr-TR'))}`;
+  
+  // WhatsApp numarası (başında 90, 0 veya +90 olmadan sadece numara)
+  const whatsappNumber = "905435790888"; // 0543 579 08 88
+  
+  // WhatsApp linkini oluştur
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
+  
+  // Başarı mesajını göster ve linke yönlendir
+  const successDiv = document.getElementById('formSuccess');
+  successDiv.innerHTML = `✅ Talep oluşturuldu! WhatsApp'a yönlendiriliyorsunuz...<br><small>Mesajınız otomatik olarak hazırlanacaktır.</small>`;
+  successDiv.style.display = 'block';
+  
+  // Butonu devre dışı bırak
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.style.opacity = '0.7';
+  btn.textContent = '📱 Yönlendiriliyor...';
+  
+  // 1 saniye sonra WhatsApp'a yönlendir
+  setTimeout(() => {
+    window.open(whatsappUrl, '_blank');
+    
+    // Formu temizleme seçeneği (isteğe bağlı)
+    // document.getElementById('name').value = '';
+    // document.getElementById('phone').value = '';
+    // document.getElementById('message').value = '';
+    // if(document.getElementById('date')) document.getElementById('date').value = '';
+    
+    // Butonu yeniden aktif et (opsiyonel)
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      btn.textContent = '📱 WhatsApp ile Randevu Talebi Gönder';
+    }, 3000);
+  }, 800);
+});
 
   </script>
 </body>

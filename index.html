@@ -331,7 +331,11 @@
     .mb-item.wa span { color: #25D366; }
     .mb-item.ig span { color: #E1306C; }
     .mb-item.call span { color: #2A7C8A; }
-    @media (min-width: 768px) { .mobile-bottom-bar { display: none; } }
+    @media (max-width: 768px) {
+  .mobile-bottom-bar {
+    display: flex !important;
+  }
+}
     @media (max-width: 900px) { .about-grid { grid-template-columns: 1fr; } .blog-grid { grid-template-columns: 1fr 1fr; } .contact-grid { grid-template-columns: 1fr; } .testimonials-grid { grid-template-columns: 1fr 1fr; } .process-steps { grid-template-columns: 1fr 1fr; gap: 40px; } .gallery-masonry { columns: 2; } .stats-strip { grid-template-columns: repeat(2,1fr); } }
     @media (max-width: 700px) {
       .nav-menu { display: none; } .hamburger { display: flex; } .mobile-menu { display: flex; }
